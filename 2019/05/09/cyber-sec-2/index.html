@@ -68,7 +68,6 @@
 
 
 
-  <meta name="keywords" content="Hystrix,">
 
 
 
@@ -78,21 +77,19 @@
 
 
 
-
-<meta name="description" content="前面写了一篇笔记介绍Hystrix中用到的设计模式，今天我们就一起看一下Hystrix是如何应用command来实现它的功能的。 Hystrix到底是什么呢？简单讲，Hystrix是个提供延迟和容错机制的库，通过隔离分布式环境中对各种服务的依赖的方式，提高整个系统的健壮性。 这句话里提到的分布式一词，就是Hystrix针对的主要场景了。在分布式系统中，一个服务通常依赖于多个其他服务，其他服务又依赖">
-<meta name="keywords" content="Hystrix">
+<meta name="description" content="四月底五月初去霓虹国浪浪浪以一个多星期，于是前前后后也没有心思搞学习了~明天又要出去团建了，开心心~  在上一篇笔记中，我们提到了网络环境中暴露的弱点，以及潜在的威胁。对于攻击者而言，这些漏洞和弱点就是他们借以实施攻击的要害。 本文的内容主要是对上Cyber Attacks时关于分类的笔记，但自己总结时发现课上提到的非常简单，真的要细分起来内容还是相当多的，比如从最古早的Malware到与web安">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hystrix简单介绍">
-<meta property="og:url" content="http://yoursite.com/2018/08/31/hystrix-intro/index.html">
+<meta property="og:title" content="Cyber Attacks Note 2 - Attacks">
+<meta property="og:url" content="http://yoursite.com/2019/05/09/cyber-sec-2/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="前面写了一篇笔记介绍Hystrix中用到的设计模式，今天我们就一起看一下Hystrix是如何应用command来实现它的功能的。 Hystrix到底是什么呢？简单讲，Hystrix是个提供延迟和容错机制的库，通过隔离分布式环境中对各种服务的依赖的方式，提高整个系统的健壮性。 这句话里提到的分布式一词，就是Hystrix针对的主要场景了。在分布式系统中，一个服务通常依赖于多个其他服务，其他服务又依赖">
+<meta property="og:description" content="四月底五月初去霓虹国浪浪浪以一个多星期，于是前前后后也没有心思搞学习了~明天又要出去团建了，开心心~  在上一篇笔记中，我们提到了网络环境中暴露的弱点，以及潜在的威胁。对于攻击者而言，这些漏洞和弱点就是他们借以实施攻击的要害。 本文的内容主要是对上Cyber Attacks时关于分类的笔记，但自己总结时发现课上提到的非常简单，真的要细分起来内容还是相当多的，比如从最古早的Malware到与web安">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/Netflix/Hystrix/wiki/images/hystrix-command-flow-chart.png">
+<meta property="og:image" content="http://static.zybuluo.com/JaneL/1zk9ctvkk994q223wyzr8yxo/Cyber%20attacks%20types.png">
 <meta property="og:updated_time" content="2019-05-09T08:54:51.693Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hystrix简单介绍">
-<meta name="twitter:description" content="前面写了一篇笔记介绍Hystrix中用到的设计模式，今天我们就一起看一下Hystrix是如何应用command来实现它的功能的。 Hystrix到底是什么呢？简单讲，Hystrix是个提供延迟和容错机制的库，通过隔离分布式环境中对各种服务的依赖的方式，提高整个系统的健壮性。 这句话里提到的分布式一词，就是Hystrix针对的主要场景了。在分布式系统中，一个服务通常依赖于多个其他服务，其他服务又依赖">
-<meta name="twitter:image" content="https://github.com/Netflix/Hystrix/wiki/images/hystrix-command-flow-chart.png">
+<meta name="twitter:title" content="Cyber Attacks Note 2 - Attacks">
+<meta name="twitter:description" content="四月底五月初去霓虹国浪浪浪以一个多星期，于是前前后后也没有心思搞学习了~明天又要出去团建了，开心心~  在上一篇笔记中，我们提到了网络环境中暴露的弱点，以及潜在的威胁。对于攻击者而言，这些漏洞和弱点就是他们借以实施攻击的要害。 本文的内容主要是对上Cyber Attacks时关于分类的笔记，但自己总结时发现课上提到的非常简单，真的要细分起来内容还是相当多的，比如从最古早的Malware到与web安">
+<meta name="twitter:image" content="http://static.zybuluo.com/JaneL/1zk9ctvkk994q223wyzr8yxo/Cyber%20attacks%20types.png">
 
 
 
@@ -122,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/31/hystrix-intro/">
+  <link rel="canonical" href="http://yoursite.com/2019/05/09/cyber-sec-2/">
 
 
 
 
 
-  <title>Hystrix简单介绍 | Jane</title>
+  <title>Cyber Attacks Note 2 - Attacks | Jane</title>
   
 
 
@@ -255,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/31/hystrix-intro/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/09/cyber-sec-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -272,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hystrix简单介绍</h1>
+          <h1 class="post-title" itemprop="name headline">Cyber Attacks Note 2 - Attacks</h1>
         
 
         <div class="post-meta">
@@ -284,8 +281,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-31T02:22:50+00:00">
-                2018-08-31
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-09T05:08:44+00:00">
+                2019-05-09
               </time>
             
 
@@ -307,8 +304,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">技术笔记</span>
+                  <a href="/categories/Web安全/" itemprop="url" rel="index">
+                    <span itemprop="name">Web安全</span>
                   </a>
                 </span>
 
@@ -344,33 +341,56 @@
       
 
       
-        <p>前面写了一篇笔记介绍Hystrix中用到的设计模式，今天我们就一起看一下Hystrix是如何应用command来实现它的功能的。</p>
-<h1 id="Hystrix到底是什么呢？"><a href="#Hystrix到底是什么呢？" class="headerlink" title="Hystrix到底是什么呢？"></a>Hystrix到底是什么呢？</h1><p>简单讲，Hystrix是个提供<strong>延迟和容错机制</strong>的库，通过<strong>隔离分布式环境中对各种服务的依赖</strong>的方式，提高整个系统的健壮性。</p>
-<p>这句话里提到的<strong>分布式</strong>一词，就是Hystrix针对的主要场景了。在分布式系统中，一个服务通常依赖于多个其他服务，其他服务又依赖于更多的服务。各个服务之间的依赖关系很可能是错综复杂的，如果不能恰当处理服务之间的依赖关系，那么很可能某一个服务挂了，就会导致任何依赖于它的服务都挂，这样的系统是十分脆弱的。</p>
-<p>Hystrix就是为了解决这个问题而出现的~</p>
-<a id="more"></a>
+        <p>四月底五月初去霓虹国浪浪浪以一个多星期，于是前前后后也没有心思搞学习了~明天又要出去团建了，开心心~</p>
 <hr>
-<h2 id="Hystrix的主要功能"><a href="#Hystrix的主要功能" class="headerlink" title="Hystrix的主要功能"></a>Hystrix的主要功能</h2><ul>
-<li><strong>隔离</strong>：为每个服务依赖维护一个单独的线程池或者通过信号量来限制调用分布式服务的资源，避免个别服务出现问题时对其他服务产生影响。</li>
-<li><strong>超时</strong>：为每个服务设置一个timeout值，使得任何请求超时都在可控范围内，而不会一直傻等下去。</li>
-<li><strong>熔断(Circuit-breaker)</strong>：但请求失败率达到一定值时打开熔断器，触发快速失败(Fail fast)。</li>
-<li><strong>Fallback</strong>：在请求失败时调用fallback逻辑，比如可以提供默认值或者从缓存中返回一些数据等。</li>
-<li><strong>实时监控</strong>：Hystrix自带了一个monitor dashboard用于实时监控请求的情况</li>
+<p>在上一篇笔记中，我们提到了网络环境中暴露的弱点，以及潜在的威胁。对于攻击者而言，这些漏洞和弱点就是他们借以实施攻击的要害。</p>
+<p>本文的内容主要是对上Cyber Attacks时关于分类的笔记，但自己总结时发现课上提到的非常简单，真的要细分起来内容还是相当多的，比如从最古早的Malware到与web安全息息相关的各类安全攻击，不论是维度还是粒度，都需要再仔细研究一波，所以这篇短小精干的划水小笔记就先用来过渡一下啦~<br><a id="more"></a></p>
+<hr>
+<h1 id="攻击的基本类型"><a href="#攻击的基本类型" class="headerlink" title="攻击的基本类型"></a>攻击的基本类型</h1><p>简单来讲，一般的攻击都可以归为一下两种基本类型之一：</p>
+<ul>
+<li><strong>Brute force attack</strong> - 采用某种机制自动的找到目标并尝试所有可能的方式以实施攻击。比如密码撞库。</li>
+<li><strong>Heuristic attack</strong> - ‘heuristic’的翻译是“启发式的，探索的”，也就是说这类攻击中需要人根据已有的知识、洞察和分析来找到某种更便捷的更节省时间的攻击方式。举个简单的例子，SQL注入攻击。</li>
 </ul>
-<p>下图是Hystrix wiki上的官方流程图，可以看到所有这些机制都被融进了整个请求从发起到响应的整个流程中：</p>
-<p><img src="https://github.com/Netflix/Hystrix/wiki/images/hystrix-command-flow-chart.png" alt="Hystrix Flow Chart"></p>
-<p>关于Hystrix的应用，它的Wiki上的介绍十分详细了，我就不再照搬啦。之前写过一个非常简单（逻辑完全是为了测试而写的）例子，跟spingboot集成的，放在GitHub上了，代码请戳<a href="https://github.com/JaneLdq/spring-boot-hystrix-example" target="_blank" rel="noopener">spring-boot-hystrix-example</a></p>
+<p>在真实场景中，攻击者通常会采用以上两类攻击的组合。如果它们被组织成一组有序的，长时间的攻击，那么又可以称这类攻击为<em>advanced persistent attack</em>, 简称APT，持续攻击。</p>
+<p><img src="http://static.zybuluo.com/JaneL/1zk9ctvkk994q223wyzr8yxo/Cyber%20attacks%20types.png" alt="Cyber attacks types"></p>
 <hr>
-<h1 id="一些奇怪的关注点"><a href="#一些奇怪的关注点" class="headerlink" title="一些奇怪的关注点"></a>一些奇怪的关注点</h1><h2 id="为什么既有GroupKey又有ThreadPool？"><a href="#为什么既有GroupKey又有ThreadPool？" class="headerlink" title="为什么既有GroupKey又有ThreadPool？"></a>为什么既有GroupKey又有ThreadPool？</h2><p>（这一点其实想写这篇笔记的初衷了，感觉在设计上是可以借鉴的点。）<br>Hystrix默认是使用<code>GroupKey</code>为Command划分线程池的，也就是说属于同一个<code>GroupKey</code>的Command请求都会使用同一个线程池中的资源。那既然这样了，为什么还需要单独设置<code>ThreadPool</code>呢？<br>单独指定线程池的好处在于可以把资源与业务逻辑分开管理。比如说，我们希望某些Command在业务逻辑或者功能上是属于同一个Group的，但是在具体Command执行时，它们分别针对不同的资源进行处理。那么这个时候为它们单独划分线程池就可以提高资源的利用率。</p>
-<p>官方举例如下：<br>假设有command A和command B都用来访问视频的元数据，GroupKey都是”VideoMetadata”，但是Command A访问资源#1， Command B访问资源#2。<br>这时如果command A请求过来，并且占用了线程池最后一个可用线程，这时又来了command B的请求，线程池饱和，command B就被卡住了，但其实它们俩真正要操作的资源是不冲突的，A本不应该阻碍B的。<br>上面这种情形，通过分别为A和B设置单独的线程池就可以避免啦~</p>
+<h1 id="攻击者"><a href="#攻击者" class="headerlink" title="攻击者"></a>攻击者</h1><p>为什么黑客们要进行攻击呢？最开始大概就是一群技术爱好者出于人类搞破坏的恶趣味利用网络做的一些“小破坏”，然而随着技术的逐渐成熟和黑客圈子的不断扩大，人性中更大恶开始展现。有一部分贪婪的人开始利用攻击获取经济利益，还有一部分人为了泄愤发起攻击。还有一类呢，就属于政治范围了，不必多提。</p>
+<p>看个表格简单归类一下：</p>
+<table>
+<thead>
+<tr>
+<th>Adversary Type</th>
+<th>Motivation</th>
+<th>Defining Attributes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vandal</td>
+<td>Mischief</td>
+<td>Individually capable, predictable</td>
+</tr>
+<tr>
+<td>Hacktivist</td>
+<td>Anger</td>
+<td>Group capable, unpredictable</td>
+</tr>
+<tr>
+<td>Criminal</td>
+<td>Greed</td>
+<td>Well funded, financial motivation</td>
+</tr>
+<tr>
+<td>Nation-State</td>
+<td>Dominance</td>
+<td>world class capability and support</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h2 id="Thread-Pools-vs-Semaphores"><a href="#Thread-Pools-vs-Semaphores" class="headerlink" title="Thread Pools vs. Semaphores"></a>Thread Pools vs. Semaphores</h2><p>使用线程池最主要的代价就是线程的创建、排队、调度和上下文切换引入的计算开销。<br>如果请求延迟本身非常低（比如大部分请求操作可能直接从内存缓存中读取数据），那么切换线程带来的开销占比就太高了，在这种情况下可以选择使用Semaphore。<br>不过需要注意的是，semaphore不支持timeout，如果一个使用semaphorege隔离的依赖卡了，那么它的父线程会被阻碍住直到底层网络超时。</p>
-<blockquote>
-<p>If a dependency is isolated with a semaphore and then becomes latent, the parent threads will remain blocked until the underlying network calls timeout.<br>Semaphore rejection will start once the limit is hit but the threads filling the semaphore can not walk away.</p>
-</blockquote>
-<hr>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://github.com/Netflix/Hystrix/wiki" target="_blank" rel="noopener">Hystrix Wiki</a></li>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><em>From CIA to APT, An Introduction to Cyber Security</em></li>
 </ul>
 
       
@@ -387,12 +407,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/Hystrix/" rel="tag"># Hystrix</a>
-          
-        </div>
-      
 
       
       
@@ -402,8 +416,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/21/quicksort/" rel="next" title="快速排序避坑指南">
-                <i class="fa fa-chevron-left"></i> 快速排序避坑指南
+              <a href="/2019/04/15/cyber-sec-1/" rel="next" title="Cyber Attacks Note 1 - Vulnerability, Threat & Risk">
+                <i class="fa fa-chevron-left"></i> Cyber Attacks Note 1 - Vulnerability, Threat & Risk
               </a>
             
           </div>
@@ -411,10 +425,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/09/ford-fulkerson/" rel="prev" title="最大流问题和Ford-Fulkerson方法">
-                最大流问题和Ford-Fulkerson方法 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -582,7 +592,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hystrix到底是什么呢？"><span class="nav-number">1.</span> <span class="nav-text">Hystrix到底是什么呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix的主要功能"><span class="nav-number">1.1.</span> <span class="nav-text">Hystrix的主要功能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些奇怪的关注点"><span class="nav-number">2.</span> <span class="nav-text">一些奇怪的关注点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么既有GroupKey又有ThreadPool？"><span class="nav-number">2.1.</span> <span class="nav-text">为什么既有GroupKey又有ThreadPool？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-Pools-vs-Semaphores"><span class="nav-number">2.2.</span> <span class="nav-text">Thread Pools vs. Semaphores</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#攻击的基本类型"><span class="nav-number">1.</span> <span class="nav-text">攻击的基本类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#攻击者"><span class="nav-number">2.</span> <span class="nav-text">攻击者</span></a></li></ol></div>
             
 
           </div>
