@@ -79,18 +79,21 @@
 
 
 
-<meta name="description" content="围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。 持续更新中…  在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子： 123456789List numbers = new ArrayList();numbers.add(new Integer(10));numbers.add(&quot;foo&quot;);    //">
+<meta name="description" content="围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。  在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子： 123456789List numbers = new ArrayList();numbers.add(new Integer(10));numbers.add(&quot;foo&quot;);    // 在不使用泛型">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅析Java泛型">
 <meta property="og:url" content="http://yoursite.com/2019/06/10/java-generics/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。 持续更新中…  在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子： 123456789List numbers = new ArrayList();numbers.add(new Integer(10));numbers.add(&quot;foo&quot;);    //">
+<meta property="og:description" content="围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。  在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子： 123456789List numbers = new ArrayList();numbers.add(new Integer(10));numbers.add(&quot;foo&quot;);    // 在不使用泛型">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-12T15:20:29.870Z">
+<meta property="og:image" content="http://static.zybuluo.com/JaneL/w21v266p6vpcn5ek2twqiir3/java%20generics.png">
+<meta property="og:image" content="http://static.zybuluo.com/JaneL/6xydzj9b0o6o8npu9v07sfu4/java%20generic%20wildcard%20subtyping.png">
+<meta property="og:updated_time" content="2019-06-14T01:55:55.728Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅析Java泛型">
-<meta name="twitter:description" content="围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。 持续更新中…  在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子： 123456789List numbers = new ArrayList();numbers.add(new Integer(10));numbers.add(&quot;foo&quot;);    //">
+<meta name="twitter:description" content="围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。  在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子： 123456789List numbers = new ArrayList();numbers.add(new Integer(10));numbers.add(&quot;foo&quot;);    // 在不使用泛型">
+<meta name="twitter:image" content="http://static.zybuluo.com/JaneL/w21v266p6vpcn5ek2twqiir3/java%20generics.png">
 
 
 
@@ -288,7 +291,19 @@
             
 
             
+              <span class="post-meta-divider">|</span>
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-06-14T01:55:55+00:00">
+                2019-06-14
+              </time>
             
           </span>
 
@@ -343,7 +358,6 @@
 
       
         <p>围观面试，正好有聊到Java泛型，自己的记忆也有点模糊，于是翻出了很久之前的零散笔记，重新整理了一波。</p>
-<p>持续更新中…</p>
 <hr>
 <p>在引入泛型之前，在Java中使用Collections是一种非常容易出错的操作。举个例子：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">List numbers = <span class="keyword">new</span> ArrayList();</span><br><span class="line">numbers.add(<span class="keyword">new</span> Integer(<span class="number">10</span>));</span><br><span class="line">numbers.add(<span class="string">"foo"</span>);    <span class="comment">// 在不使用泛型的情况下，List中每个元素的类型都是Object，这意味着你可以往里面扔任何类型的对象</span></span><br><span class="line">Integer sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); i++) &#123;</span><br><span class="line">    Integer n = (Integer) numbers.get(i); <span class="comment">// 必须使用强制转换将元素转换为我们想要的类型</span></span><br><span class="line">    sum++;</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(sum);</span><br></pre></td></tr></table></figure>
@@ -417,12 +431,6 @@
 <h3 id="Lower-Bounded-lt-super-subtype-gt"><a href="#Lower-Bounded-lt-super-subtype-gt" class="headerlink" title="Lower Bounded - &lt;? super subtype&gt;"></a>Lower Bounded - &lt;? super subtype&gt;</h3><p>与Upper Bounded Wildcards相反，Lower Bounded Wildcards - <code>&lt;? super subtype&gt;</code>限制的是下限，即用于指定参数可以是一个具体的类型以及它的父类。</p>
 <p>举个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addNumbers</span><span class="params">(List&lt;? <span class="keyword">super</span> Integer&gt; list)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">        list.add(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>上面这个方法希望任何一个能存储<code>Integer</code>值的类型都可以作为参数，那么相比较于只允许<code>Integer</code>类型作为元素的<code>List&lt;Integer&gt;</code>，<code>List&lt;? super Integer&gt;</code>使得<code>List&lt;Number&gt;</code>, <code>List&lt;Object&gt;</code>类型都可以作为参数使用。</p>
-<!--
-## 通配符间的继承关系
-看图说话！
-
-![通配符间的继承关系][2]
--->
 <hr>
 <h2 id="通配符的使用指南"><a href="#通配符的使用指南" class="headerlink" title="通配符的使用指南"></a>通配符的使用指南</h2><p>在考虑何时该使用哪种通配符之前，我们先将函数的变量分个类：</p>
 <ul>
@@ -438,24 +446,20 @@
 <li>当一个变量既作为输入变量又作为输出变量时，就不要使用通配符啦</li>
 </ul>
 <p>以上这些原则并不适用与返回值，应该尽量避免在返回值中使用通配符，因为这种写法就是在强制方法的调用者来处理通配符。</p>
-<p>未完待续…</p>
+<hr>
+<h1 id="泛型中的继承关系"><a href="#泛型中的继承关系" class="headerlink" title="泛型中的继承关系"></a>泛型中的继承关系</h1><h2 id="一般泛型的继承关系"><a href="#一般泛型的继承关系" class="headerlink" title="一般泛型的继承关系"></a>一般泛型的继承关系</h2><p>废话不多说，直接看图：<br><img src="http://static.zybuluo.com/JaneL/w21v266p6vpcn5ek2twqiir3/java%20generics.png" alt="java generics.png-17.8kB"></p>
+<p>上图中MyList接口的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">MyList</span>&lt;<span class="title">E</span>,<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setValue</span><span class="params">(<span class="keyword">int</span> index, T val)</span></span>;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="通配符的继承关系"><a href="#通配符的继承关系" class="headerlink" title="通配符的继承关系"></a>通配符的继承关系</h2><p>照样先上图：<br><img src="http://static.zybuluo.com/JaneL/6xydzj9b0o6o8npu9v07sfu4/java%20generic%20wildcard%20subtyping.png" alt="java generic wildcard subtyping.png-19.1kB"><br>关于上图中左边的关系，以<code>Integer</code>和<code>Number</code>为例，<code>Integer</code>是<code>Number</code>的子类。这里再说明一下，在使用一般泛型类型参数的泛型类继承关系中<code>List&lt;Integer&gt;</code>并不是<code>List&lt;Number&gt;</code>的子类，但它们都是<code>List&lt;?&gt;</code>的子类。<br>这样写的代码是会报错的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; intList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">List&lt;Number&gt; numList = intList; <span class="comment">// compile error</span></span><br></pre></td></tr></table></figure></p>
+<p>那如果我们想List<integer>的元素能够以Number的方法访问要怎么写呢？根据右边展示的关系，可以使用下面这段代码来实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;? extends Integer&gt; intList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">List&lt;? extends Number&gt; numList = intList;</span><br></pre></td></tr></table></figure></integer></p>
+<hr>
+<p>关于泛型的一些介绍就先这样吧，把大概的框架梳理了一下，没想到断断续续每天一两个小时的，也花了小一周的时间。<br>另外还有一些相关的话题，比如Java中的类型擦除，就没有放在这里，准备之后单独新开一篇做整理。<br>下次见啦~</p>
 <hr>
 <p><strong>参考资料</strong></p>
 <ul>
 <li><a href="https://docs.oracle.com/javase/tutorial/java/generics/index.html" target="_blank" rel="noopener">The Java Tutorial - Generics</a></li>
 <li><em>Effective Java (3rd Edition)</em></li>
 </ul>
-<!--
----
 
-# 泛型的继承关系
-看图说话！
-![泛型的继承关系][1]
-
-图中的MyList类定义如下
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">MyList</span>&lt;<span class="title">E</span>,<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setValue</span><span class="params">(<span class="keyword">int</span> index, T val)</span></span>;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>–&gt;</p>
--->
       
     </div>
     
@@ -661,7 +665,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是泛型"><span class="nav-number">1.</span> <span class="nav-text">什么是泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型类"><span class="nav-number">1.1.</span> <span class="nav-text">泛型类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原始类型-Raw-Types"><span class="nav-number">1.1.1.</span> <span class="nav-text">原始类型 Raw Types</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型方法"><span class="nav-number">1.2.</span> <span class="nav-text">泛型方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bounded类型参数"><span class="nav-number">1.3.</span> <span class="nav-text">Bounded类型参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神奇的通配符"><span class="nav-number">2.</span> <span class="nav-text">神奇的通配符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unbounded通配符"><span class="nav-number">2.1.</span> <span class="nav-text">Unbounded通配符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bounded通配符"><span class="nav-number">2.2.</span> <span class="nav-text">Bounded通配符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Upper-Bounded-lt-extends-supertype-gt"><span class="nav-number">2.2.1.</span> <span class="nav-text">Upper Bounded - &lt;? extends supertype&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lower-Bounded-lt-super-subtype-gt"><span class="nav-number">2.2.2.</span> <span class="nav-text">Lower Bounded - &lt;? super subtype&gt;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通配符的使用指南"><span class="nav-number">2.3.</span> <span class="nav-text">通配符的使用指南</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是泛型"><span class="nav-number">1.</span> <span class="nav-text">什么是泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型类"><span class="nav-number">1.1.</span> <span class="nav-text">泛型类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原始类型-Raw-Types"><span class="nav-number">1.1.1.</span> <span class="nav-text">原始类型 Raw Types</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型方法"><span class="nav-number">1.2.</span> <span class="nav-text">泛型方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bounded类型参数"><span class="nav-number">1.3.</span> <span class="nav-text">Bounded类型参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神奇的通配符"><span class="nav-number">2.</span> <span class="nav-text">神奇的通配符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unbounded通配符"><span class="nav-number">2.1.</span> <span class="nav-text">Unbounded通配符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bounded通配符"><span class="nav-number">2.2.</span> <span class="nav-text">Bounded通配符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Upper-Bounded-lt-extends-supertype-gt"><span class="nav-number">2.2.1.</span> <span class="nav-text">Upper Bounded - &lt;? extends supertype&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lower-Bounded-lt-super-subtype-gt"><span class="nav-number">2.2.2.</span> <span class="nav-text">Lower Bounded - &lt;? super subtype&gt;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通配符的使用指南"><span class="nav-number">2.3.</span> <span class="nav-text">通配符的使用指南</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#泛型中的继承关系"><span class="nav-number">3.</span> <span class="nav-text">泛型中的继承关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一般泛型的继承关系"><span class="nav-number">3.1.</span> <span class="nav-text">一般泛型的继承关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通配符的继承关系"><span class="nav-number">3.2.</span> <span class="nav-text">通配符的继承关系</span></a></li></ol></li></ol></div>
             
 
           </div>
