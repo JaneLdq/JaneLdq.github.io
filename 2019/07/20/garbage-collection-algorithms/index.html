@@ -68,6 +68,7 @@
 
 
 
+  <meta name="keywords" content="GC,">
 
 
 
@@ -77,17 +78,19 @@
 
 
 
-<meta name="description" content="很久没有更新了，近一个月一直接到各种非编程任务，业务不那么熟练所以比较焦躁。 不过还好这个月有世界杯，看看球吃吃瓜很是解压~作为一个以前根本不看球的人今年居然会对世界杯产生兴趣而且差不多眼看一个个冷门爆出来也是非常神奇的体验了~心疼我德的帅哥哥们~（希望下届能看到意呆利男模队噢(:з」∠)">
+
+<meta name="description" content="在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识——垃圾回收算法（以下简称 GC 算法）。 GC算法的基本类型并不多，概括起来大概就以下三种：  标记-清除算法 (Mark-and-Sweep) - 由 John McCarthy 1960 年在论文 Recursive functions of symbolic expressions and t">
+<meta name="keywords" content="GC">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一周年打卡">
-<meta property="og:url" content="http://yoursite.com/2018/07/05/the-first-anniversary/index.html">
+<meta property="og:title" content="垃圾回收算法梳理">
+<meta property="og:url" content="http://yoursite.com/2019/07/20/garbage-collection-algorithms/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="很久没有更新了，近一个月一直接到各种非编程任务，业务不那么熟练所以比较焦躁。 不过还好这个月有世界杯，看看球吃吃瓜很是解压~作为一个以前根本不看球的人今年居然会对世界杯产生兴趣而且差不多眼看一个个冷门爆出来也是非常神奇的体验了~心疼我德的帅哥哥们~（希望下届能看到意呆利男模队噢(:з」∠)">
+<meta property="og:description" content="在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识——垃圾回收算法（以下简称 GC 算法）。 GC算法的基本类型并不多，概括起来大概就以下三种：  标记-清除算法 (Mark-and-Sweep) - 由 John McCarthy 1960 年在论文 Recursive functions of symbolic expressions and t">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-20T08:58:43.743Z">
+<meta property="og:updated_time" content="2019-07-20T08:58:43.739Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一周年打卡">
-<meta name="twitter:description" content="很久没有更新了，近一个月一直接到各种非编程任务，业务不那么熟练所以比较焦躁。 不过还好这个月有世界杯，看看球吃吃瓜很是解压~作为一个以前根本不看球的人今年居然会对世界杯产生兴趣而且差不多眼看一个个冷门爆出来也是非常神奇的体验了~心疼我德的帅哥哥们~（希望下届能看到意呆利男模队噢(:з」∠)">
+<meta name="twitter:title" content="垃圾回收算法梳理">
+<meta name="twitter:description" content="在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识——垃圾回收算法（以下简称 GC 算法）。 GC算法的基本类型并不多，概括起来大概就以下三种：  标记-清除算法 (Mark-and-Sweep) - 由 John McCarthy 1960 年在论文 Recursive functions of symbolic expressions and t">
 
 
 
@@ -117,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/05/the-first-anniversary/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/20/garbage-collection-algorithms/">
 
 
 
 
 
-  <title>一周年打卡 | Jane</title>
+  <title>垃圾回收算法梳理 | Jane</title>
   
 
 
@@ -250,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/the-first-anniversary/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/20/garbage-collection-algorithms/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -267,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">一周年打卡</h1>
+          <h1 class="post-title" itemprop="name headline">垃圾回收算法梳理</h1>
         
 
         <div class="post-meta">
@@ -279,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-05T15:13:17+00:00">
-                2018-07-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-20T07:36:14+00:00">
+                2019-07-20
               </time>
             
 
@@ -302,8 +305,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/随笔/" itemprop="url" rel="index">
-                    <span itemprop="name">随笔</span>
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
                   </a>
                 </span>
 
@@ -339,14 +342,32 @@
       
 
       
-        <p>很久没有更新了，近一个月一直接到各种非编程任务，业务不那么熟练所以比较焦躁。</p>
-<p>不过还好这个月有世界杯，看看球吃吃瓜很是解压~作为一个以前根本不看球的人今年居然会对世界杯产生兴趣而且差不多眼看一个个冷门爆出来也是非常神奇的体验了~心疼我德的帅哥哥们~（希望下届能看到意呆利男模队噢<em>(:з」∠)</em></p>
-<a id="more"></a>
-<p>原本是想两天前写点什么纪念一下正式工作一周年的。可是那天心情真的很丧。大概是因为最近都没有在学习吧。</p>
-<p>再一次感叹，好像什么都还没来得及做一年就晃过去了。不过也是在这毕业之后的一年里才真正有了危机感，技术更新迭代得太快，时刻都担心着一不小心就要被淘汰了。曾经畅想的工作之后还能业余时间培养个小爱好什么的，简直不要太天真。尤其是最近，一边焦虑着技术基础还没打牢，一边在工作中还要考虑提升各类软技能，时常纠结该如何平衡两者，还是很容易浮躁。目前的工作环境相对而言是轻松的，接下来的日子要好好把控节奏，不要放任自己待在舒适区才是。</p>
-<p>总之，这一年技术上的成长并不能令自己满意，要加把劲啦。</p>
+        <p>在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识——垃圾回收算法（以下简称 GC 算法）。</p>
+<p>GC算法的基本类型并不多，概括起来大概就以下三种：</p>
+<ul>
+<li><strong>标记-清除算法</strong> (Mark-and-Sweep) - 由 <a href="https://en.wikipedia.org/wiki/John_McCarthy_(computer_scientist)" target="_blank" rel="noopener">John McCarthy</a> 1960 年在论文 <em>Recursive functions of symbolic expressions and their computation by machine</em> 中提出的标记-清除算法</li>
+<li><strong>引用计数法</strong> (Reference Counting) - 由 <a href="https://en.wikipedia.org/wiki/George_E._Collins" target="_blank" rel="noopener">George E. Collins</a> 1960 年在论文 <em>A method for overlapping and erasure of lists</em> 提出的引用计数法</li>
+<li><strong>复制算法</strong> - 由 <a href="https://en.wikipedia.org/wiki/Marvin_Minsky" target="_blank" rel="noopener">Marwin L.Minsky</a> 1963 年在论文 <em>A Lisp garbage collector algorithm using serial secondary storage</em> 中提出的复制算法</li>
+</ul>
+<p>在这之后还出现了各种各样的 GC 算法，但究其根本都可以归纳为以上三种算法的组合和应用。<br><a id="more"></a></p>
 <hr>
-<p>emmmmmmmm….觉得还是要肯定一下自己独立生活的能力以及培养出了读书的好习惯！<br>(#`O′) 你看人的劣根性大概有一点就是太容易自我满足了┓( ´∀` )┏</p>
+<h1 id="GC-算法的评价标准"><a href="#GC-算法的评价标准" class="headerlink" title="GC 算法的评价标准"></a>GC 算法的评价标准</h1><p>聊算法总免不了要进行一番性能比较，既然要比较，就需要一些能够度量的标准。<br>以下列举了一些常见度量：</p>
+<ul>
+<li>吞吐量 (Throughput) - 在一段较长的时间内， 非 GC 运行时间所占总运行时间的百分比</li>
+<li>GC 开销 (Garbage collection overhead) - 与吞吐量相反，即 GC 时间占总时间的百分比</li>
+<li>暂停时间 (Pause time) - 在整个程序执行过程中程序为了进行 GC 而停下来的时间</li>
+<li>收集频率 (Frequency of collectoin) </li>
+<li>堆使用效率</li>
+</ul>
+<p>在选择 GC 算法时，要考虑到程序的应用场景，举几个例子：</p>
+<ul>
+<li>交互式 (interactive) 应用可能要求 GC 暂停时间要短，这样对用户操作才更友好</li>
+<li>非交互式 (non-interactive) 应用，比如运行在后台的程序，对整个 GC 运行的时间的要求所占权重就更高</li>
+<li>实时 (real-time) 应用则可能对 GC 暂停时间和 GC 总时间的占比上限都更低</li>
+<li>运行在有限内存空间上的嵌入式应用可能对堆使用效率要求更高</li>
+<li>…</li>
+</ul>
+<p>// TODO 先去看个电影嘻嘻</p>
 
       
     </div>
@@ -362,6 +383,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/GC/" rel="tag"># GC</a>
+          
+        </div>
+      
 
       
       
@@ -371,8 +398,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/28/maven-7/" rel="next" title="Maven学习（七）- Profile和资源过滤">
-                <i class="fa fa-chevron-left"></i> Maven学习（七）- Profile和资源过滤
+              <a href="/2019/07/13/java-memory-areas-and-oom/" rel="next" title="Java内存管理之运行时数据区">
+                <i class="fa fa-chevron-left"></i> Java内存管理之运行时数据区
               </a>
             
           </div>
@@ -380,10 +407,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/19/how-to-use-browser-console-for-debugging/" rel="prev" title="解锁浏览器里调戏八阿哥新姿势">
-                解锁浏览器里调戏八阿哥新姿势 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -435,8 +458,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -532,6 +564,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GC-算法的评价标准"><span class="nav-number">1.</span> <span class="nav-text">GC 算法的评价标准</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
