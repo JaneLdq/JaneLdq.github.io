@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。（过气网红即视感ಠ_ಠ">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-24T00:57:40.768Z">
+<meta property="og:updated_time" content="2019-07-26T09:55:09.687Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（二）引用计数器">
 <meta name="twitter:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。（过气网红即视感ಠ_ಠ">
@@ -350,7 +350,13 @@
 <p>那么问题来了，<strong>为什么在更新指针时要先增后减呢？先减后增不是一样的吗？</strong><br>还真不一样哦，<strong>考虑 <code>*ptr</code> 和 <code>obj</code> 是同一对象时的情况</strong>。如果先减后增，而 <code>obj</code> 的引用计数在减一之后为 0 的话，它就直接被回收了，再执行<code>inc_ref_cnt</code>就要出错了。反过来，先增后减的话就可以避免这种情况发生。</p>
 <p>通过更新指针，可能会产生没有被其他任何地方引用的“垃圾”，引用计数法会在指针更新时监督是否有垃圾产生，从而在垃圾产生时将其立刻回收。同时这也意味着，在为新对象申请空间时如果没有分块，就没法新分配对象，因为堆中所有的对象都为活动对象。</p>
 <hr>
-<h1 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h1><p>// 未完待续～</p>
+<h1 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h1><p>先说优点：</p>
+<ul>
+<li><strong>可即刻回收垃圾</strong> - 当对象的被引用数变为 0 的那一刻，它就明白自己已经是个垃圾了，然后它就会非常自觉地把自己作为空闲空间连接到空闲链表中去。</li>
+<li><strong>暂停时间短</strong> - 垃圾回收在每次指针变更时都会进行，因此单次垃圾回收量并不大，时间自然更短</li>
+<li><strong>不用沿指针查找</strong> - 在需要减少沿指针查找的次数时，引用计数法就有优势了。（举个例子，在分布式环境中如果要沿节点之间的指针进行查找，成本就会很高。）</li>
+</ul>
+<p>// 未完待续～</p>
 
       
     </div>
