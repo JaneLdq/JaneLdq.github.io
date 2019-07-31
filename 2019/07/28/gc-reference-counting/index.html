@@ -82,14 +82,14 @@
 <meta name="description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。（过气网红即视感ಠ_ಠ">
 <meta name="keywords" content="GC">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GC算法梳理（二）引用计数法">
+<meta property="og:title" content="GC算法梳理（三）复制算法">
 <meta property="og:url" content="http://yoursite.com/2019/07/28/gc-reference-counting/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。（过气网红即视感ಠ_ಠ">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-29T14:27:32.952Z">
+<meta property="og:updated_time" content="2019-07-31T15:38:42.516Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GC算法梳理（二）引用计数法">
+<meta name="twitter:title" content="GC算法梳理（三）复制算法">
 <meta name="twitter:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。（过气网红即视感ಠ_ಠ">
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <title>GC算法梳理（二）引用计数法 | Jane</title>
+  <title>GC算法梳理（三）复制算法 | Jane</title>
   
 
 
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">GC算法梳理（二）引用计数法</h1>
+          <h1 class="post-title" itemprop="name headline">GC算法梳理（三）复制算法</h1>
         
 
         <div class="post-meta">
@@ -425,7 +425,7 @@
 <li>0 表示状态 <strong>UNIQUE</strong>，即引用数为1</li>
 <li>1 表示状态 <strong>MULTIPLE</strong>，即引用数大于等于2</li>
 </ul>
-<p>然后通过更新指针进行内存管理，只不过是通过复制指针的方式来更新指针：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">copy_ptr(dest_ptr, src_ptr) &#123;</span><br><span class="line">    // 先尝试回收dest_ptr指向的对象</span><br><span class="line">    delete_ptr(dest_ptr)</span><br><span class="line">    // 复制指针</span><br><span class="line">    *dest_ptr = *src_ptr</span><br><span class="line">    // 更新指针的引用数标签</span><br><span class="line">    set_multiple_tag(dest_ptr)</span><br><span class="line">    if (tag(src_ptr) == UNIQUE) &#123;</span><br><span class="line">        set_multiple_tag(str_ptr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">delete_ptr(ptr) &#123;</span><br><span class="line">    // 当指针的标签为UNIQUE，即引用数为1时，将对象回收</span><br><span class="line">    if (tag(ptr) == UNIQUE) &#123;</span><br><span class="line">        reclaim(*ptr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后通过更新指针进行内存管理，只不过是通过复制指针的方式来更新指针：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">copy_ptr(dest_ptr, src_ptr) &#123;</span><br><span class="line">    <span class="comment">// 先尝试回收dest_ptr指向的对象</span></span><br><span class="line">    delete_ptr(dest_ptr)</span><br><span class="line">    <span class="comment">// 复制指针</span></span><br><span class="line">    *dest_ptr = *src_ptr</span><br><span class="line">    <span class="comment">// 更新指针的引用数标签</span></span><br><span class="line">    set_multiple_tag(dest_ptr)</span><br><span class="line">    <span class="keyword">if</span> (tag(src_ptr) == UNIQUE) &#123;</span><br><span class="line">        set_multiple_tag(str_ptr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">delete_ptr(ptr) &#123;</span><br><span class="line">    <span class="comment">// 当指针的标签为UNIQUE，即引用数为1时，将对象回收</span></span><br><span class="line">    <span class="keyword">if</span> (tag(ptr) == UNIQUE) &#123;</span><br><span class="line">        reclaim(*ptr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p><strong>「优缺点」</strong><br>1-bit 引用计数法的优点是不容易出现高速缓存缺失，因为它不需要在更新计数器时读取要引用的对象，因此一定程度上避免了高速缓存缺失。另外就是不需要额外的给计数器留空间，节省了内存空间。<br>缺点就是要如果有大量计数器溢出的对象，会给堆造成巨大的负担，甚至很难保证分块。</p>
 <p>（老实说，这个算法我自己还有点疑问，但是能找到的资料也比较少，看看之后能不能薅到原文的羊毛吧 /_\）</p>
 <hr>
@@ -476,6 +476,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/31/gc-copying/" rel="prev" title="GC算法梳理（三）复制算法">
+                GC算法梳理（三）复制算法 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -554,7 +558,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">63</span>
+                  <span class="site-state-item-count">64</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
