@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/copying-gc.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/recursive-copying-gc.png">
-<meta property="og:updated_time" content="2019-08-01T05:53:45.980Z">
+<meta property="og:updated_time" content="2019-08-01T06:39:06.227Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（三）复制算法">
 <meta name="twitter:description" content="复制 (Copying GC) 算法最早由 Marvin Lee Minsky 于1963年在 A LISP Garbage Collector Algorithm Using Serial Secondary Storage 中提出。 复制算法的基本思想很简单，就是把整个堆空间一分为二，每次只使用一半的空间用于分配：  正在使用的空间叫做 From 空间，空置的另一半称为 To 空间； 执行 G">
@@ -377,8 +377,9 @@
 <hr>
 <h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ul>
 <li><strong>堆利用率低</strong> - GC 复制算法将堆空间一分为二，每次只能利用一般用于分配。这一缺点可以通过搭配使用复制算法和标记-清除算法得到改善。</li>
-<li><strong>递归调用函数</strong> - 每次递归调用都会消耗栈空间，由此带来了不少额外负担，而且还有栈溢出的可能。我们接下来要介绍的 Cheney 复制算法就采用迭代的方式避免了这个问题。</li>
+<li><strong>递归调用函数</strong> - 每次递归调用都会消耗栈空间，由此带来了不少额外负担，而且还有栈溢出的可能。</li>
 </ul>
+<p>我们接下来要介绍的 Cheney 复制算法就采用迭代的方式避免了递归调用的问题。</p>
 <hr>
 <h1 id="Cheney-复制算法"><a href="#Cheney-复制算法" class="headerlink" title="Cheney 复制算法"></a>Cheney 复制算法</h1><p>// TODO 画图真费时间啊</p>
 

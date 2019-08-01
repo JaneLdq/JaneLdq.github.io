@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="“你是什么垃圾？” ¯\_(ツ)_/¯ 最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～ 「辣鸡系列」正式开坑～(⊙v⊙)  在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太">
+<meta name="description" content="“你是什么垃圾？” ¯\_(ツ)_/¯ 最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～ 「辣鸡系列」正式开坑～(⊙v⊙)  在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也不怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存管理之运行时数据区">
 <meta property="og:url" content="http://yoursite.com/2019/07/13/java-memory-areas-and-oom/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="“你是什么垃圾？” ¯\_(ツ)_/¯ 最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～ 「辣鸡系列」正式开坑～(⊙v⊙)  在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太">
+<meta property="og:description" content="“你是什么垃圾？” ¯\_(ツ)_/¯ 最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～ 「辣鸡系列」正式开坑～(⊙v⊙)  在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也不怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/jvm-runtime-data-area.svg">
-<meta property="og:updated_time" content="2019-08-01T05:53:45.980Z">
+<meta property="og:updated_time" content="2019-08-01T06:39:06.227Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存管理之运行时数据区">
-<meta name="twitter:description" content="“你是什么垃圾？” ¯\_(ツ)_/¯ 最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～ 「辣鸡系列」正式开坑～(⊙v⊙)  在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太">
+<meta name="twitter:description" content="“你是什么垃圾？” ¯\_(ツ)_/¯ 最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～ 「辣鸡系列」正式开坑～(⊙v⊙)  在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也不怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不">
 <meta name="twitter:image" content="http://yoursite.com/uploads/images/jvm-runtime-data-area.svg">
 
 
@@ -348,8 +348,8 @@
 <p>最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～</p>
 <p>「辣鸡系列」正式开坑～(⊙v⊙)</p>
 <hr>
-<p>在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太容易并不代表不会，如果对 JVM 的内存管理不了解的话，一旦出现问题，debug 就不那么美妙了。</p>
-<p>作为本系列的开篇，自然要从垃圾的来源—— Java 的运行时数据区 (Run-Time Data Area) 讲起。</p>
+<p>在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也不怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太容易并不代表不会，如果对 JVM 的内存管理不了解的话，一旦出现问题，debug 就不那么美妙了。</p>
+<p>作为本系列的开篇，自然要从垃圾的来源 —— Java 的运行时数据区 (Run-Time Data Area) 讲起。</p>
 <a id="more"></a>
 <hr>
 <h2 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h2><p>JVM 在执行 Java 程序时会把它管理的内存区域划分为不同的数据区域，每个区域的用途、创建和销毁的时间都不同。<br>根据最新的 JVM 规范 <em><a href="https://docs.oracle.com/javase/specs/jvms/se12/html/index.html" target="_blank" rel="noopener">The Java® Virtual Machine Specification (Java SE 12 Edition)</a></em>，JVM管理的内存包括如下几个区域。<br>（虽然说是最新的，不过就规范而言，这一部分的内容倒是基本没怎么变动）。</p>

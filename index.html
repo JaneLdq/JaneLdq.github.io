@@ -493,7 +493,9 @@
       
         
           <p>什么是垃圾？不可能再被任何途径使用的对象。</p>
-<p>由此很容易想到采用<strong>引用计数</strong>的方法：让对象记录下<strong>有多少其他对象引用自己</strong>。当引用数为0时，对象就被该作为垃圾回收了。（过气网红即视感ಠ_ಠ<br>
+<p>由此很容易想到采用<strong>引用计数</strong>的方法：让对象记录下<strong>有多少其他对象引用自己</strong>。当引用数为0时，对象就被该作为垃圾回收了。</p>
+<hr>
+<h1 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h1><p>引用计数法的基本实现很简单，它不像标记-清除算法那样有明确的 GC 操作，而是在<strong>创建对象时</strong>和<strong>对指针进行更新时</strong>同时完成引用计数器的更新。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/07/28/gc-reference-counting/#more" rel="contents">
@@ -639,12 +641,12 @@
 
       
         
-          <p>在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识——垃圾回收算法（以下简称 GC 算法）。</p>
-<p>GC算法的基本类型并不多，概括起来大概就以下三种：</p>
+          <p>在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识 —— 垃圾回收算法（以下简称 GC 算法）。</p>
+<p>GC 算法的基本类型并不多，概括起来大概就以下三种：</p>
 <ul>
-<li><strong>标记-清除算法</strong> (Mark-Sweep) - 由 <a href="https://en.wikipedia.org/wiki/John_McCarthy_(computer_scientist)" target="_blank" rel="noopener">John McCarthy</a> 1960 年在论文 <em>Recursive functions of symbolic expressions and their computation by machine</em> 中提出的标记-清除算法</li>
-<li><strong>引用计数法</strong> (Reference Counting) - 由 <a href="https://en.wikipedia.org/wiki/George_E._Collins" target="_blank" rel="noopener">George E. Collins</a> 1960 年在论文 <em>A method for overlapping and erasure of lists</em> 提出的引用计数法</li>
-<li><strong>复制算法</strong> - 由 <a href="https://en.wikipedia.org/wiki/Marvin_Minsky" target="_blank" rel="noopener">Marwin L.Minsky</a> 1963 年在论文 <em>A Lisp garbage collector algorithm using serial secondary storage</em> 中提出的复制算法</li>
+<li><strong>标记-清除算法</strong> (Mark-Sweep) - 由 <a href="https://en.wikipedia.org/wiki/John_McCarthy_(computer_scientist)" target="_blank" rel="noopener">John McCarthy</a> 1960 年在论文 <em>Recursive functions of symbolic expressions and their computation by machine</em> 中提出的标记-清除算法。</li>
+<li><strong>引用计数法</strong> (Reference Counting) - 由 <a href="https://en.wikipedia.org/wiki/George_E._Collins" target="_blank" rel="noopener">George E. Collins</a> 1960 年在论文 <em>A method for overlapping and erasure of lists</em> 提出的引用计数法。</li>
+<li><strong>复制算法</strong> (Copying) - 由 <a href="https://en.wikipedia.org/wiki/Marvin_Minsky" target="_blank" rel="noopener">Marwin L.Minsky</a> 1963 年在论文 <em>A Lisp garbage collector algorithm using serial secondary storage</em> 中提出的复制算法。</li>
 </ul>
 <p>在这之后还出现了各种各样的 GC 算法，但究其根本都可以归纳为以上三种算法的组合和应用。<br>
           <!--noindex-->
@@ -796,8 +798,8 @@
 <p>最近垃圾分类的话题那是相当火热，作为紧跟时代的程序员，我们不仅要开创格子衫的天下，还要走在时尚的最前沿～于是，我决定趁此机会，理一理Java中的内存管理与垃圾回收机制～</p>
 <p>「辣鸡系列」正式开坑～(⊙v⊙)</p>
 <hr>
-<p>在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太容易并不代表不会，如果对 JVM 的内存管理不了解的话，一旦出现问题，debug 就不那么美妙了。</p>
-<p>作为本系列的开篇，自然要从垃圾的来源—— Java 的运行时数据区 (Run-Time Data Area) 讲起。</p>
+<p>在日常的 Java 开发中，有 JVM 的自动内存管理机制，我们一般也不怎么关注 Java 的内存分配和垃圾回收，因为不太容易出现内存泄漏和溢出的问题。不太容易并不代表不会，如果对 JVM 的内存管理不了解的话，一旦出现问题，debug 就不那么美妙了。</p>
+<p>作为本系列的开篇，自然要从垃圾的来源 —— Java 的运行时数据区 (Run-Time Data Area) 讲起。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/07/13/java-memory-areas-and-oom/#more" rel="contents">
