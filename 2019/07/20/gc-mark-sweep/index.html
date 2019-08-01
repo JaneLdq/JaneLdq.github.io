@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/reachability-analysis.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/mark-sweep-memory.svg">
-<meta property="og:updated_time" content="2019-07-31T15:38:42.516Z">
+<meta property="og:updated_time" content="2019-08-01T05:53:45.980Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（一）标记-清除算法">
 <meta name="twitter:description" content="在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识——垃圾回收算法（以下简称 GC 算法）。 GC算法的基本类型并不多，概括起来大概就以下三种：  标记-清除算法 (Mark-Sweep) - 由 John McCarthy 1960 年在论文 Recursive functions of symbolic expressions and their">
@@ -387,7 +387,7 @@
 <li>标记阶段会标记所有的存活对象，由此可知，<strong>标记时间与存活对象的总数成正比</strong></li>
 </ul>
 <hr>
-<h1 id="清除阶段"><a href="#清除阶段" class="headerlink" title="清除阶段"></a>清除阶段</h1><p>在清除阶段，GC会便利整个堆，回收未被标记的对象（即垃圾们）。<br>伪码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sweep_phase () &#123;</span><br><span class="line">    cursor = $heap_start; <span class="comment">// $heap_start表示堆首地址</span></span><br><span class="line">    <span class="keyword">while</span> (cursor &lt; $head_end) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cursor.mark == TRUE) &#123;</span><br><span class="line">            cursor.mark = FALSE <span class="comment">// 重置标记状态，准备下一次的 GC</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 将当前对象空间释放，连接到空闲链表头部</span></span><br><span class="line">            cursor.next = $free_list</span><br><span class="line">            $free_list = cursor</span><br><span class="line">        &#125;</span><br><span class="line">        cursor += cursor.size <span class="comment">// 跳过当前对象所占空间，指向下一个对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="清除阶段"><a href="#清除阶段" class="headerlink" title="清除阶段"></a>清除阶段</h1><p>在清除阶段，GC会遍历整个堆，回收未被标记的对象（即垃圾们）。<br>伪码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sweep_phase () &#123;</span><br><span class="line">    cursor = $heap_start; <span class="comment">// $heap_start表示堆首地址</span></span><br><span class="line">    <span class="keyword">while</span> (cursor &lt; $head_end) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cursor.mark == TRUE) &#123;</span><br><span class="line">            cursor.mark = FALSE <span class="comment">// 重置标记状态，准备下一次的 GC</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 将当前对象空间释放，连接到空闲链表头部</span></span><br><span class="line">            cursor.next = $free_list</span><br><span class="line">            $free_list = cursor</span><br><span class="line">        &#125;</span><br><span class="line">        cursor += cursor.size <span class="comment">// 跳过当前对象所占空间，指向下一个对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <ul>
 <li>在清除阶段，GC 会遍历整个堆，也就是说，<strong>清除时间与堆大小成正比</strong></li>
 </ul>
@@ -491,8 +491,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/07/28/gc-reference-counting/" rel="prev" title="GC算法梳理（三）复制算法">
-                GC算法梳理（三）复制算法 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/07/28/gc-reference-counting/" rel="prev" title="GC算法梳理（二）引用计数法">
+                GC算法梳理（二）引用计数法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
