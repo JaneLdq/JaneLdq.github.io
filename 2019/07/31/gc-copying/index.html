@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/copying-gc.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/recursive-copying-gc.png">
-<meta property="og:updated_time" content="2019-08-01T06:39:06.227Z">
+<meta property="og:updated_time" content="2019-08-05T09:59:50.387Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（三）复制算法">
 <meta name="twitter:description" content="复制 (Copying GC) 算法最早由 Marvin Lee Minsky 于1963年在 A LISP Garbage Collector Algorithm Using Serial Secondary Storage 中提出。 复制算法的基本思想很简单，就是把整个堆空间一分为二，每次只使用一半的空间用于分配：  正在使用的空间叫做 From 空间，空置的另一半称为 To 空间； 执行 G">
@@ -381,7 +381,32 @@
 </ul>
 <p>我们接下来要介绍的 Cheney 复制算法就采用迭代的方式避免了递归调用的问题。</p>
 <hr>
-<h1 id="Cheney-复制算法"><a href="#Cheney-复制算法" class="headerlink" title="Cheney 复制算法"></a>Cheney 复制算法</h1><p>// TODO 画图真费时间啊</p>
+<h1 id="Cheney-复制算法"><a href="#Cheney-复制算法" class="headerlink" title="Cheney 复制算法"></a>Cheney 复制算法</h1><p>Cheney提出的复制算法采用迭代的方式进行复制，具体思路如下所示：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">copying() &#123;</span><br><span class="line">    <span class="comment">// scan是用于搜索复制完成的对象的指针，$free是指向To空间分块开头的指针</span></span><br><span class="line">    scan = $<span class="built_in">free</span> = $to_start</span><br><span class="line">    <span class="comment">// 首先复制所有的roots</span></span><br><span class="line">    <span class="keyword">for</span> (r: $root) &#123;</span><br><span class="line">        *r = copy(*r)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 然后从已经复制到To空间的对象开始复制它们引用的子对象</span></span><br><span class="line">    <span class="keyword">while</span> (scan != $<span class="built_in">free</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (child: children(scan)) &#123;</span><br><span class="line">            *child = copy(*child)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 向前移动scan指针，指向下一个已经复制到To空间的对象</span></span><br><span class="line">        scan += scan.size</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 交换From和To空间</span></span><br><span class="line">    swap($from_start, $to_start)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">copy(obj) &#123;</span><br><span class="line">    <span class="comment">// 检查obj.forwarding指针是否指向To空间，如果是，说明该对象已经被复制过，直接返回其forwarding指针</span></span><br><span class="line">    <span class="comment">// 否则进行复制</span></span><br><span class="line">    <span class="keyword">if</span> (is_not_pointer_to_heap(obj.forwarding, $to_start)) &#123;</span><br><span class="line">        copy_data($<span class="built_in">free</span>, obj, obj.size)</span><br><span class="line">        obj.forwarding = $<span class="built_in">free</span></span><br><span class="line">        $<span class="built_in">free</span> += obj.size</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> obj.forwarding</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Cheney算法其实质其实就是<strong>广度优先遍历</strong>：</p>
+<ul>
+<li>新引入的 <strong>scan</strong> 指针和 <strong>$free</strong> 指针组成了一个 <strong>FIFO队列</strong>（<strong>scan</strong> 指向队首，<strong>$free</strong> 指向队尾）；</li>
+<li>首先将所有 GC Roots 依次复制并加入队列（<strong>scan</strong>保持不动，<strong>$free</strong>移到下一个空闲分块）；</li>
+<li>GC Root复制完成后，移动 <strong>scan</strong> 指针从队列中依次读取被复制的对象，遍历其引用的子对象，完成复制并加入队列（整个过程中 <strong>scan</strong> 每前进一次， <strong>$free</strong> 可能前进零次或 N 次，取决于是否有引用子对象）；</li>
+<li>直到 <strong>scan</strong> 和 <strong>$free</strong> 相遇，说明队列为空，复制结束。</li>
+</ul>
+<hr>
+<h2 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h2><ul>
+<li><strong>迭代算法</strong>，消除了递归调用函数的额外负担和栈的消耗</li>
+<li><strong>直接将堆空间用作队列</strong>，省去了额外内存空间开销</li>
+</ul>
+<hr>
+<h2 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>由于广度优先遍历的特点，Cheney复制算法中无法将有引用关系的对象复制到相邻的位置，无法充分利用缓存。</li>
+</ul>
+<hr>
+<p>总结一下，GC 复制算法最主要的优势在于它消除了碎片化，连续空间有利于高速分配，而代价是牺牲了一半的堆空间，降低了堆空间的利用率。</p>
+<hr>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>垃圾回收的算法与实现</li>
+<li>Robert R. Fenichel, Jerome C. Yochelson, <em>A LISP Garbage-Collector for Virtual-Memory Computer Systems</em>, 1969</li>
+<li>C. J. Cheney, <em>A Nonrecursive List Compacting Algorithm</em>, 1970</li>
+</ul>
 
       
     </div>
@@ -588,7 +613,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#递归复制算法"><span class="nav-number">1.</span> <span class="nav-text">递归复制算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优点"><span class="nav-number">1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺点"><span class="nav-number">1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cheney-复制算法"><span class="nav-number">2.</span> <span class="nav-text">Cheney 复制算法</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#递归复制算法"><span class="nav-number">1.</span> <span class="nav-text">递归复制算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优点"><span class="nav-number">1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺点"><span class="nav-number">1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cheney-复制算法"><span class="nav-number">2.</span> <span class="nav-text">Cheney 复制算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优点-1"><span class="nav-number">2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺点-1"><span class="nav-number">2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></div>
             
 
           </div>
