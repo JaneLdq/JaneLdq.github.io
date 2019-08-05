@@ -89,7 +89,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/copying-gc.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/recursive-copying-gc.png">
-<meta property="og:updated_time" content="2019-08-05T09:59:50.387Z">
+<meta property="og:image" content="http://yoursite.com/uploads/images/cheney-copying-gc.png">
+<meta property="og:updated_time" content="2019-08-05T14:03:56.970Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（三）复制算法">
 <meta name="twitter:description" content="复制 (Copying GC) 算法最早由 Marvin Lee Minsky 于1963年在 A LISP Garbage Collector Algorithm Using Serial Secondary Storage 中提出。 复制算法的基本思想很简单，就是把整个堆空间一分为二，每次只使用一半的空间用于分配：  正在使用的空间叫做 From 空间，空置的另一半称为 To 空间； 执行 G">
@@ -389,17 +390,25 @@
 <li>GC Root复制完成后，移动 <strong>scan</strong> 指针从队列中依次读取被复制的对象，遍历其引用的子对象，完成复制并加入队列（整个过程中 <strong>scan</strong> 每前进一次， <strong>$free</strong> 可能前进零次或 N 次，取决于是否有引用子对象）；</li>
 <li>直到 <strong>scan</strong> 和 <strong>$free</strong> 相遇，说明队列为空，复制结束。</li>
 </ul>
+<p>看个例子加深一下理解吧～<br><img src="/uploads/images/cheney-copying-gc.png" alt="cheney copying gc"></p>
 <hr>
 <h2 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h2><ul>
-<li><strong>迭代算法</strong>，消除了递归调用函数的额外负担和栈的消耗</li>
-<li><strong>直接将堆空间用作队列</strong>，省去了额外内存空间开销</li>
+<li><strong>迭代算法</strong>，消除了递归调用函数的额外负担和栈的消耗。</li>
+<li><strong>直接将堆空间用作队列</strong>，省去了额外内存空间开销。</li>
 </ul>
 <hr>
 <h2 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h2><ul>
-<li>由于广度优先遍历的特点，Cheney复制算法中无法将有引用关系的对象复制到相邻的位置，无法充分利用缓存。</li>
+<li>由于广度优先遍历的特点，Cheney复制算法中无法将有引用关系的对象复制到相邻的位置，降低了高速缓存的命中率（还记得“访问的局限性”吗）。</li>
 </ul>
 <hr>
-<p>总结一下，GC 复制算法最主要的优势在于它消除了碎片化，连续空间有利于高速分配，而代价是牺牲了一半的堆空间，降低了堆空间的利用率。</p>
+<p>最后。总结一下本文的要点：</p>
+<ul>
+<li>GC 复制算法最主要的优势在于它消除了碎片化，连续空间有利于高速分配，而代价是牺牲了一半的堆空间，降低了堆空间的利用率。</li>
+<li>GC 复制算法的具体实现有递归和迭代两种方式，各有利弊。</li>
+</ul>
+<p>除此之外，还有诸如近似深度优先搜索算法、多空间复制算法等改进算法，不过这里就不详细介绍了，感兴趣的话可以自己找资料研究～</p>
+<hr>
+<p>8/5 21:49<br>为走心配图的自己点个赞～画图虽然有点费时间，但我觉得对于理解过程还是很有帮助哒！</p>
 <hr>
 <p><strong>参考资料</strong></p>
 <ul>
