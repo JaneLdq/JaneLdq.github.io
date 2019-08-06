@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/uploads/images/copying-gc.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/recursive-copying-gc.png">
 <meta property="og:image" content="http://yoursite.com/uploads/images/cheney-copying-gc.png">
-<meta property="og:updated_time" content="2019-08-06T07:06:20.418Z">
+<meta property="og:updated_time" content="2019-08-06T13:54:35.136Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（三）复制算法">
 <meta name="twitter:description" content="复制 (Copying GC) 算法最早由 Marvin Lee Minsky 于1963年在 A LISP Garbage Collector Algorithm Using Serial Secondary Storage 中提出。 复制算法的基本思想很简单，就是把整个堆空间一分为二，每次只使用一半的空间用于分配：  正在使用的空间叫做 From 空间，空置的另一半称为 To 空间； 执行 G">
@@ -398,7 +398,7 @@
 </ul>
 <hr>
 <h2 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h2><ul>
-<li>由于广度优先遍历的特点，Cheney复制算法中无法将有引用关系的对象复制到相邻的位置，降低了高速缓存的命中率（还记得“访问的局限性”吗）。</li>
+<li>由于广度优先遍历的特点，Cheney复制算法中无法将有引用关系的对象复制到相邻的位置，降低了高速缓存的命中率（还记得“访问的局部性”吗）。</li>
 </ul>
 <hr>
 <p>最后。总结一下本文的要点：</p>
@@ -455,6 +455,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/06/gc-mark-compact/" rel="prev" title="GC算法梳理（四）标记-整理算法">
+                GC算法梳理（四）标记-整理算法 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -533,7 +537,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
