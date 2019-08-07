@@ -339,7 +339,7 @@
 
       
         
-          <p>前面我们提到 GC 算法的基本类型无非<strong>标记-清除</strong>、<strong>引用计数</strong>和<strong>复制</strong>算法三类，那么这篇笔记中介绍的<strong>标记-整理 (Mark-Compact)</strong>算法就开始将 <strong>标记-清除</strong> 算法与<strong>复制</strong>算法结合的产物。不同于复制算法是从一个空间往另一个空间复制，标记-整理算法是在整个堆上<strong>原地整理</strong>，因此也提高了堆的利用率。</p>
+          <p>前面我们提到 GC 算法的基本类型无非<strong>标记-清除</strong>、<strong>引用计数</strong>和<strong>复制</strong>算法三类，那么这篇笔记中介绍的<strong>标记-整理 (Mark-Compact)</strong> 算法就开始将 <strong>标记-清除</strong> 算法与<strong>复制</strong>算法结合的产物。不同于复制算法是从一个空间往另一个空间复制，标记-整理算法是在整个堆上<strong>原地整理</strong>，因此也提高了堆的利用率。</p>
 <p>标记-整理算法的思路也很简单，分为两个阶段：</p>
 <ul>
 <li><strong>标记阶段</strong> - 与标记-清除算法中的标记阶段一样，遍历堆上的对象，标记出活动对象。</li>
