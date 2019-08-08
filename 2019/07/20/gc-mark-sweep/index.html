@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/reachability-analysis.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/mark-sweep-memory.svg">
-<meta property="og:updated_time" content="2019-08-08T07:00:10.364Z">
+<meta property="og:updated_time" content="2019-08-08T09:59:13.887Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（一）标记-清除算法">
 <meta name="twitter:description" content="在介绍JVM中提供的垃圾收集器之前，我觉得有必要先补充一下关于垃圾回收（以下简称 GC）的理论知识 —— 垃圾回收算法（以下简称 GC 算法）。 GC 算法的基本类型并不多，概括起来大概就以下三种：  标记-清除算法 (Mark-Sweep) - 由 John McCarthy 1960 年在论文 Recursive functions of symbolic expressions and th">
@@ -418,13 +418,22 @@
 </ul>
 <hr>
 <h1 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h1><p>优点很显然，<strong>实现简单</strong>。<br>什么，就这一条？<br>大道至简，这还不够优秀吗？</p>
+<hr>
 <h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>缺点那可得好好说说了。</p>
 <h3 id="碎片化-ragmentation"><a href="#碎片化-ragmentation" class="headerlink" title="碎片化 ragmentation)"></a>碎片化 ragmentation)</h3><p>上文也提到了，标记-清除算法在使用过程中会产生逐步被细化的分块。</p>
 <ul>
-<li>如果碎片化严重，即使堆中分块的总大小够用，也会因为每个分块太小而不能执行分配。</li>
-<li>一般在将数据从内存读取到缓存中时，考虑到“访问的局部性”效应（即具有引用关系的对象之间很可能存在连续访问的情况），会将其附近的数据读取到缓存中。如果能把具有引用关系的对象安排在邻近位置则能提高在缓存中读取到想利用的数据的概率。而碎片化很可能导致对象相隔太远，降低高速缓存命中率。</li>
+<li>如果碎片化严重，即使堆中分块的总大小够用，也会<strong>因为每个分块太小而不能执行分配</strong>。</li>
+<li><p>一般在将数据从内存读取到缓存中时，考虑到“<strong>访问的局部性</strong>”效应，会将其附近的数据读取到缓存中。如果能把具有引用关系的对象安排在邻近位置则能提高在缓存中读取到想利用的数据的概率。而碎片化很可能导致对象相隔太远，<strong>降低高速缓存命中率</strong>。</p>
+<p>  <strong>「Note」</strong> 程序在运行时可能表现出良好的时间局部性或空间局部性，而高速缓存可以利用这样的局部性提升程序的性能。</p>
+<ul>
+<li><strong>时间局部性 (temporal locality)</strong> - 一旦程序访问了某个内存地址，则很可能在不久之后再次访问该地址，因此值得将它的值缓存。</li>
+<li><strong>空间局部性 (space locality)</strong> - 一旦程序访问了某个内存地址，则很可能在不久之后访问该地址附近的数据。<br>现代硬件可以从两方面利用程序的局部性，一方面，高速缓存与更低级别内存之间不会进行单个字节的数据传输，而是以固定字节数的最小传输单元，通常为 32 - 128 字节；另一方面，处理器可能会使用硬件预取 (prefetch) 技术，例如探测有规律的内存访问操作，从而提前读取数据流。</li>
 </ul>
+</li>
+</ul>
+<hr>
 <h3 id="分配速度受限"><a href="#分配速度受限" class="headerlink" title="分配速度受限"></a>分配速度受限</h3><p>由于分块不是连续的，每次分配都必须遍历空闲链表，找到足够大的分块。最坏的情况下，每次进行分配都会要遍历整个空闲链表。</p>
+<hr>
 <h3 id="与写时复制技术不兼容"><a href="#与写时复制技术不兼容" class="headerlink" title="与写时复制技术不兼容"></a>与写时复制技术不兼容</h3><p>写时复制技术 (Copy-on-write) 是指在复制进程时（比如执行fork()函数)只是装作复制了内存空间，实际上是将内存空间共享了。如果只是从内存空间上读数据，访问共享内存并没有问题。但是如果要进行写入操作，就不能直接重写共享内存，而需要复制自己私有空间的数据，对这个私有空间进行重写，复制后只访问这个私有空间而不再访问共享内存。也就是说，这么技术是<strong>在写入时才进行复制</strong>，因而被称为<strong>写时复制技术</strong>。</p>
 <p>正因为这种特性，标记-清除算法每次进行标记时都要对对象执行写入操作，从而触发<strong>写时复制</strong>，这样会导致频繁发生本不应该的发生的复制。</p>
 <hr>
