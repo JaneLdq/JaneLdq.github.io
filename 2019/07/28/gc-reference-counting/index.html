@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。  引用计数法引用计数法的基本实现很简单，它不像标记-清除算法那样有明确的 GC 操作，而是在创建对象时和对指针进行更新时同时完成引用计数器的更新。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-08T09:59:13.887Z">
+<meta property="og:updated_time" content="2019-08-09T08:05:34.890Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法梳理（二）引用计数法">
 <meta name="twitter:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。  引用计数法引用计数法的基本实现很简单，它不像标记-清除算法那样有明确的 GC 操作，而是在创建对象时和对指针进行更新时同时完成引用计数器的更新。">
@@ -369,7 +369,7 @@
 <h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><h2 id="延迟引用计数法"><a href="#延迟引用计数法" class="headerlink" title="延迟引用计数法"></a>延迟引用计数法</h2><p>延迟引用计数法 (Deferred Reference Counting) 是由 <a href="https://en.wikipedia.org/wiki/L._Peter_Deutsch" target="_blank" rel="noopener">L.Peter Deutsch</a> 和 <a href="https://en.wikipedia.org/wiki/Daniel_G._Bobrow" target="_blank" rel="noopener">Daniel G. Bobrow</a> 1976 年在文章 <strong><a href="https://people.cs.umass.edu/~emery/classes/cmpsci691s-fall2004/papers/p522-deutsch.pdf" target="_blank" rel="noopener">An Efficient, Incremental, Automatic Garbage Collector</a></strong> 中提出来的。</p>
 <p>前面提到引用计数法的一大缺点就是计数器值更新过于频繁，每一次对根引用的更新都要触发所有子节点引用数的更新。延迟引用计数法就是针对这一点进行的优化。<br>延迟引用计数法的改进基本思路主要是以下两点：</p>
 <ul>
-<li><strong>局部变量引用（variable reference）不计入引用计数</strong>，也就是说那些只被本地变量引用的对象不在延迟引用计数法管理范围内，默认他们随着栈弹出消亡。</li>
+<li><strong>局部变量引用（variable reference）不计入引用计数</strong>，也就是说那些只被本地变量（操作栈和寄存器中）引用的对象不在延迟引用计数法管理范围内，默认他们随着栈弹出消亡，只有当堆中对象的引用计数发生变化时才进行更新。</li>
 <li><strong>用哈希表保存对象的引用数</strong>。</li>
 </ul>
 <p>延迟引用计数法引入了两个表的概念：</p>
@@ -401,6 +401,12 @@
 <li>依然<strong>没有解决循环引用的问题</strong>，要与跟踪垃圾收集器 (tracing garbage collector) 配合使用</li>
 </ul>
 <hr>
+<p>除了延迟引用计数外，还有两类与采用延迟操作类似思想的优化方案：<strong>合并</strong>和<strong>缓存</strong>：</p>
+<ul>
+<li>合并 - 许多引用计数操作都是临时性的、“不必要”的，通过在程序运行时仅跟踪对象在某一时段开始和结束时的状态，忽略中间过程引起的计数值变更，达到减少引用值频繁修改的目的。</li>
+<li>缓存 - 将所有引用计数值增减操作缓冲起来以便后续进行处理，同时只有回收线程可以执行引用计数变更操作。缓冲引用计数关注的是<strong>何时</strong>执行变更，而不是<strong>是否</strong>执行变更。<br>这三种方案的思想是相通的：都是将程序的执行划分为一系列时段 (epoch)，在同一时段内赋值器可以省略部分甚至所有的同步引用计数操作，或将其替换为非同步的写操作。这样，当个时段内的本地引用计数变更就不会暴露到全局了。</li>
+</ul>
+<hr>
 <h2 id="Sticky-引用计数法"><a href="#Sticky-引用计数法" class="headerlink" title="Sticky 引用计数法"></a>Sticky 引用计数法</h2><p>前面有提到引用计数法的缺点之一就是计数器占用的空间太多。如果一个计数器采用 32 位，那么对于一个整体占用空间小的对象来说，计数器占比就太大了。<br>那如果使用较少位宽呢？比如一个 5 位的计数器，那这样计数器的最大值就只有 31，如果一个对象被引用的次数超过 31，计数器就溢出了。</p>
 <p>针对计数器溢出的对象，我们可以有两种处理方法：</p>
 <ol>
@@ -416,7 +422,6 @@
 </ul>
 </li>
 </ol>
-<p>（想了半天我也没明白为什么要叫做 “sticky” 引用计数法，sticky到底是什么意思呢？是指什么都不做的情况下那些不再被处理的垃圾就被像 stick 在内存空间里一样了吗…）</p>
 <hr>
 <h2 id="1-bit-引用计数法"><a href="#1-bit-引用计数法" class="headerlink" title="1-bit 引用计数法"></a>1-bit 引用计数法</h2><p>1-bit 引用计数法是 Sticky 引用计数法的一个极端例子，即计数器只有 1 位大小。<br>计数器只有 1 位，那还有什么意义？分分钟溢出给你看。然而，有研究者表明“几乎没有对象是被共有的，所有对象都能马上回收”。如果事实是这样，那么 <strong>1 位的计数器，采用 0 表示引用数为 1，用 1 表示引用数大于等于 2</strong>，也是能有效率地进行内存管理的。</p>
 <p>W.R. Stoye、T.J.W Clark 和 A.C.Norman 在 <em>Some Practical Methods for Rapid Combinator Reduction</em> (published in LISP and Functional Programming 1984)* 提出了 1-bit 引用计数法。（下论文要付费，好贵贵，突然好怀念学生时代，虽然当时也没好好利用学校的资源）</p>
@@ -558,7 +563,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-count">66</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

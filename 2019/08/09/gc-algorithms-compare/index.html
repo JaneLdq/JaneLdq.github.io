@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Git,">
+  <meta name="keywords" content="GC,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="平时只用过最简单的git merge，还一般都是在GUI上点点按钮就结束了，今天正好遇到了一个比较不一样的操作，趁着记忆还新鲜，就顺便聊聊git merge与git rebase那些事吧～ 简化版故事背景是这样的：  dev是主要开发分支 master一般不动，只在release时把dev的代码merge过来  结果，今天正好在dev改了些代码，而且又正好要往mastermerge，结果发现上一次">
-<meta name="keywords" content="Git">
+<meta name="description" content="前面几篇笔记里我们分别介绍了四种基本的 GC 算法：  标记-清除算法 复制算法 引用计数法 标记-整理算法   本文将它们放在一起，做一个总结概括~">
+<meta name="keywords" content="GC">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git - Merging &amp; Rebasing">
-<meta property="og:url" content="http://yoursite.com/2018/09/10/git-merge-rebase/index.html">
+<meta property="og:title" content="GC算法梳理（五）概括与比较">
+<meta property="og:url" content="http://yoursite.com/2019/08/09/gc-algorithms-compare/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="平时只用过最简单的git merge，还一般都是在GUI上点点按钮就结束了，今天正好遇到了一个比较不一样的操作，趁着记忆还新鲜，就顺便聊聊git merge与git rebase那些事吧～ 简化版故事背景是这样的：  dev是主要开发分支 master一般不动，只在release时把dev的代码merge过来  结果，今天正好在dev改了些代码，而且又正好要往mastermerge，结果发现上一次">
+<meta property="og:description" content="前面几篇笔记里我们分别介绍了四种基本的 GC 算法：  标记-清除算法 复制算法 引用计数法 标记-整理算法   本文将它们放在一起，做一个总结概括~">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-08-09T08:05:34.890Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Git - Merging &amp; Rebasing">
-<meta name="twitter:description" content="平时只用过最简单的git merge，还一般都是在GUI上点点按钮就结束了，今天正好遇到了一个比较不一样的操作，趁着记忆还新鲜，就顺便聊聊git merge与git rebase那些事吧～ 简化版故事背景是这样的：  dev是主要开发分支 master一般不动，只在release时把dev的代码merge过来  结果，今天正好在dev改了些代码，而且又正好要往mastermerge，结果发现上一次">
+<meta name="twitter:title" content="GC算法梳理（五）概括与比较">
+<meta name="twitter:description" content="前面几篇笔记里我们分别介绍了四种基本的 GC 算法：  标记-清除算法 复制算法 引用计数法 标记-整理算法   本文将它们放在一起，做一个总结概括~">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/10/git-merge-rebase/">
+  <link rel="canonical" href="http://yoursite.com/2019/08/09/gc-algorithms-compare/">
 
 
 
 
 
-  <title>Git - Merging & Rebasing | Jane</title>
+  <title>GC算法梳理（五）概括与比较 | Jane</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/10/git-merge-rebase/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/09/gc-algorithms-compare/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Git - Merging & Rebasing</h1>
+          <h1 class="post-title" itemprop="name headline">GC算法梳理（五）概括与比较</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-10T12:36:54+00:00">
-                2018-09-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-09T05:47:03+00:00">
+                2019-08-09
               </time>
             
 
@@ -305,8 +305,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/工具/" itemprop="url" rel="index">
-                    <span itemprop="name">工具</span>
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
                   </a>
                 </span>
 
@@ -342,53 +342,193 @@
       
 
       
-        <p>平时只用过最简单的git merge，还一般都是在GUI上点点按钮就结束了，今天正好遇到了一个比较不一样的操作，趁着记忆还新鲜，就顺便聊聊git merge与git rebase那些事吧～</p>
-<p>简化版故事背景是这样的：</p>
-<ol>
-<li><code>dev</code>是主要开发分支</li>
-<li><code>master</code>一般不动，只在release时把<code>dev</code>的代码merge过来</li>
-</ol>
-<p>结果，今天正好在<code>dev</code>改了些代码，而且又正好要往<code>master</code>merge，结果发现上一次merge到<code>master</code>的代码改动又出现在了这次的提交中，检查<code>master</code>发现代码确实已经过去了，但是git在对比时的时候还是会识别出提交过的代码，很奇怪。</p>
-<p>又是一番检查，发现问题就出在这条命令上：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git merge --squash</span><br></pre></td></tr></table></figure></p>
+        <p>前面几篇笔记里我们分别介绍了四种基本的 GC 算法：</p>
+<ul>
+<li><a href="/2019/07/20/gc-mark-sweep/" title="标记-清除算法">标记-清除算法</a></li>
+<li><a href="/2019/07/31/gc-copying/" title="复制算法">复制算法</a></li>
+<li><a href="/2019/07/28/gc-reference-counting/" title="引用计数法">引用计数法</a></li>
+<li><a href="/2019/08/06/gc-mark-compact/" title="标记-整理算法">标记-整理算法</a>
+</li>
+</ul>
+<p>本文将它们放在一起，做一个总结概括~</p>
 <a id="more"></a>
-<h1 id="git-merge"><a href="#git-merge" class="headerlink" title="$ git merge"></a>$ git merge</h1><p>我们先来看看git merge的一般情况。<br>如上所述，我们在开发新功能时一般都会切分支单独开发，开发结束后再把代码merge回<code>master</code>。</p>
-<p>假设当前提交历史如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">... - A - B - C - G         &lt;== master</span><br><span class="line">       \</span><br><span class="line">        D - E - F           &lt;== dev</span><br></pre></td></tr></table></figure>
-<p>在<code>master</code>分支上调用<code>$ git merge dev</code>就会基于<code>master</code>把<code>dev</code>上的commits重放（replay）到<code>master</code>上，并且新建一个<strong>“merge commit”</strong>记录merge后的变更，变成这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">... - A - B - C - G - H     &lt;== master</span><br><span class="line">       \            /</span><br><span class="line">         D - E - F          &lt;== dev</span><br></pre></td></tr></table></figure>
-<p><code>H</code>就是由merge操作创建的新的”merge commit”。</p>
-<p>如果加上<code>--squash</code>参数，git不会帮我们创建新的commit，也不会移动HEAD，但是squash merge之后，所有来自<code>dev</code>分支的commit做的更改就像被复制到<code>master</code>上，好像所有的改动都是原本就是基于master做的，调用<code>$ git status</code>可以查看到是merge之后的变动尚未提交。这时，我们就可以把所有的变更打包成新的单个commit，这个commit的内容跟<code>dev</code>分支一样，但它完全独立于<code>dev</code>。<br>如下图，所示，H中包含了D-E-F中的所有改动，并且并不会如常规merge一般与F连接起来。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">... - A - B - C - G - H     &lt;== master</span><br><span class="line">       \         </span><br><span class="line">        D - E - F           &lt;== dev</span><br></pre></td></tr></table></figure></p>
-<p>官方解释：</p>
-<blockquote>
-<p>–squash: Produce the working tree and index state as if a real merge happened (except for the merge information), but do not actually make a commit, move the HEAD, or record $GIT_DIR/MERGE_HEAD (to cause the next git commit command to create a merge commit). This allows you to create a single commit on top of the current branch whose effect is the same as merging another branch</p>
-</blockquote>
-<p>这样就能解释为什么会出现文章开头遇到的情况了。因为上一次把<code>dev</code>合并到<code>master</code>用的是squash merge，但是merge之后没有删除<code>dev</code>而是随后又接着在<code>dev</code>上开发I-J-K，下一次merge时，git找到的<code>dev</code>和<code>master</code>的共同祖先还是A，所以D-E-F-I-J-K都会被算作是新的commit，然后重复更改就出现了。</p>
-<p>所以，如果使用squash merge某个分支后，以后还要基于该分支开发，那么就应该在merge后立即删除并且重新从<code>master</code>切出来，以保证提交历史的一致性。</p>
 <hr>
-<h1 id="git-rebase"><a href="#git-rebase" class="headerlink" title="$ git rebase"></a>$ git rebase</h1><p>由于我们遇到的情况是<code>dev</code>分支上已经有了新的提交，就不能直接删除了，所以想看看能不能用rebase抢救一下～</p>
-<p>按我的理解，不同于merge会保持原始的分支记录，只在最后新建一个merge commit把二者合一；rebase则是在base分支上，把merge分支的所有commit重新提交了一遍，相当于重写了提交历史，使得提交历史更简洁清晰。</p>
-<p>假设当前提交历史如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">... - A - B - C - G         &lt;== master</span><br><span class="line">       \</span><br><span class="line">        D - E - F           &lt;== dev</span><br></pre></td></tr></table></figure></p>
-<p>在<code>dev</code>分支调用<code>$ git rebase master</code>后就变成了这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">... - A - B - C - G - D&apos; - E&apos; - F&apos;</span><br><span class="line">                  ^             ^</span><br><span class="line">                master         dev</span><br></pre></td></tr></table></figure></p>
-<p>git会找到<code>master</code>和<code>dev</code>提交历史的共同祖先A，然后把D-E-F的变更保存在临时文件中，把指针指向base分支的当前commit，也就是G，最后按顺序把D-E-F重新基于base操作一遍，变成D’-E’-F’。</p>
-<p>这时再把<code>dev</code>merge到<code>master</code>就可以看到提交历史是线性的，就好像所有提交都是按顺序发生的，不同于直接merge保留的并行历史。</p>
-<blockquote>
-<p>Rebasing replays changes from one line of work onto another in the order they were introduced, whereas merging takes the endpoints and merges them together.</p>
-</blockquote>
-<p>整洁的历史记录看起来令人心旷神怡，然而，在使用rebase时一定要记得遵守如下指南哦，否则后果可能就不那么令人愉快了～</p>
-<p>重要的事情，说三遍。<br><strong>Do not rebase commits that exist outside your repository！</strong><br><strong>Do not rebase commits that exist outside your repository！</strong><br><strong>Do not rebase commits that exist outside your repository！</strong></p>
-<p>为什么不要这样做？因为rebase操作实际上是把原有的commits都丢弃，重新创建commits，即使内容和顺序完全一样，有的东西就是不一样了，你懂的。</p>
-<p>官网上有个看起来就很头大的例子，参观请移步<a href="https://git-scm.com/book/en/v2/Git-Branching-Rebasing" target="_blank" rel="noopener">Git-Rebasing #The Perils of Rebasing</a></p>
+<h1 id="追踪式-VS-引用计数式"><a href="#追踪式-VS-引用计数式" class="headerlink" title="追踪式 VS. 引用计数式"></a>追踪式 VS. 引用计数式</h1><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>算法</th>
+<th>特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>追踪式 GC</td>
+<td>标记-清除算法<br>复制算法<br>标记-整理算法</td>
+<td>要先通过堆遍历找出所有的活动对象，然后在反向确定出未遍历到的垃圾</td>
+</tr>
+<tr>
+<td>引用计数式 GC</td>
+<td>引用计数法</td>
+<td>通过引用关系的创建或删除直接判定对象的存活性</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h1 id="Merging-or-rebasing"><a href="#Merging-or-rebasing" class="headerlink" title="Merging or rebasing?"></a>Merging or rebasing?</h1><p>merge和rebase其实体现的是看待提交历史的不同角度。<br>如果把提交历史看做是<strong>用来记录实际发生了些什么</strong>，那么它就不应该被修改，而merge能原始的保留历史记录状态，但是要注意一点，每一次merge都会创建一条新的merge commit（这里指常规merge），这会导致历史记录中出现很多merge commit。</p>
-<p>而如果把提交历史<strong>用于讲述整个项目是如何创造出来的故事线</strong>，那么你可能需要记录的是关键的里程碑节点和清晰的描述。就好比原始提交记录是草稿，那么通过rebase可以做一些整理、编辑操作，使得最终呈现出来的是更加完整而清晰的作品。</p>
-<p>我们不能说merge和rebase一定谁更好，否则就不会有两者同时存在了，更多的时候你会需要结合所遇到的情形组合使用各种命令。</p>
-<p>不过有一种常见的做法值得参考的是：在提交本地分支前可以rebase一下，以保持本地分支的历史记录的整洁。但是，千万记得不要轻易rebase公共branch哦！</p>
+<h1 id="移动式-VS-非移动式"><a href="#移动式-VS-非移动式" class="headerlink" title="移动式 VS. 非移动式"></a>移动式 VS. 非移动式</h1><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>算法</th>
+<th>特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>移动式</td>
+<td>复制算法<br>标记-整理算法</td>
+<td>一定要找到并且更新指向被移动对象的全部引用</td>
+</tr>
+<tr>
+<td>非移动式</td>
+<td>标记-清除<br>引用计数法</td>
+<td>只要找到某个活动对象的一个引用就足够了</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging" target="_blank" rel="noopener">Git-Basic Merging</a></li>
-<li><a href="https://git-scm.com/book/en/v2/Git-Branching-Rebasing" target="_blank" rel="noopener">Git-Rebasing</a></li>
-<li><a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing" target="_blank" rel="noopener">Merging vs. Rebasing</a></li>
-<li><a href="https://stackoverflow.com/questions/44021102/how-to-squash-commits-in-git" target="_blank" rel="noopener">StackOverflow-How to squash commits in Git</a></li>
+<h1 id="四类基本算法的优缺点比较"><a href="#四类基本算法的优缺点比较" class="headerlink" title="四类基本算法的优缺点比较"></a>四类基本算法的优缺点比较</h1><table>
+<thead>
+<tr>
+<th>算法</th>
+<th>优点</th>
+<th>局限性</th>
+<th>其他</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标记-清除算法</td>
+<td>不会给赋值器带来任何额外的读写开销；<br>具有较高的吞吐量；<br>具有较高的空间利用率（相比于复制算法和引用计数法）；<br>不用移动对象，可与保守式回收器兼容；</td>
+<td>长期运行的程序堆可能会逐渐碎片化；<br>分配速度受限，因为分块不连续；</td>
+<td>一个通用方案：尽量长久地使用标记-清除算法进行水后，仅当碎片化到达一定程度时才使用标记-整理回收。</td>
+</tr>
+<tr>
+<td>标记-整理算法</td>
+<td>允许极为快速的顺序分配；<br>解决了碎片化问题；</td>
+<td>任意顺序算法只能处理单一大小的对象；<br>整理过程需要两次到三次整堆遍历，速度较慢，吞吐量较差；<br>对象头部可能需要额外的空间用于保存迁移信息；</td>
+<td>回收器遍历和分配对象的顺序会影响赋值器的局部性，对高速缓存命中率造成影响，从而影响程序性能；</td>
+</tr>
+<tr>
+<td>复制算法</td>
+<td>消除碎片；<br>可实现高速分配；<br>较高的吞吐量；<br>不用引入额外的空间存放迁移信息；</td>
+<td>堆的利用率低（二分之一），导致回收次数比其他算法更多；</td>
+<td>可用空间减少，回收次数增多对性能的影响取决于赋值器与分配器之间的平衡、应用程序的特征和可用堆空间的大小等</td>
+</tr>
+<tr>
+<td>引用计数法</td>
+<td>可即刻回收垃圾（将内存管理开销分摊在程序运行过程中，垃圾被立即回收，因此可以持续操作即将填满的堆，而不必像追踪式GC需要一定的保留空间）；<br>具有较好的局部性；<br>不用沿指针查找；<br>可以在代码中实现，无需作为语言的运行时环境的一部分，开发者可以完全控制引用计数的使用（自主处理性能开销和安全性之间的平衡）；</td>
+<td>计数器更新频繁，给赋值器带来额外开销；<br>开发者必须避免在更新计数器值的过程中可能出现的竞争问题；<br>计数器值需要占用额外空间；<br>无法处理循环引用；</td>
+<td>即使系统部分不可用，引用计数法也能回收部分内存，这一特性对分布式系统十分有用；<br>引用计数法可以管理数量较少但所有者关系复杂的资源，这些资源通常较大，因此计数器值占用的额外开销可以忽略；</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="四类基本算法的部分实现与优化"><a href="#四类基本算法的部分实现与优化" class="headerlink" title="四类基本算法的部分实现与优化"></a>四类基本算法的部分实现与优化</h1><h2 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h2><table>
+<thead>
+<tr>
+<th>算法</th>
+<th>优点</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>位图标记</td>
+<td>位图使标记位更加密集；<br>标记过程不会修改任何对象，清除过程不会对任何活动对象进行读写操作，只会在释放垃圾时覆盖某些域，因此减少了内存中需要修改的字节数，减少了对高速缓存的写入，今儿减少需要写回内存的数据量</td>
+<td>通常仅适用于单线程环境，因为多线程同时修改位图可能存在较大的写冲突风险</td>
+</tr>
+<tr>
+<td>延迟清除</td>
+<td>清除垃圾腾出的空间能立即得到复用，因而提升了程序的局部性；将标记-清除算法的复杂度降低到与堆中存活对象成正比的水平</td>
+<td>延迟清除的效果是不均衡的，如果可回收对形成一片连续的空间，那么效率很高；如果进入大批活动对象范围，则很可能多次查询失败要直到遍历整个堆才找到合适的空间</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h2><table>
+<thead>
+<tr>
+<th>算法</th>
+<th>优点</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Two-Finger 算法</td>
+<td>简单快速，每次遍历过程操作较少；<br>forwarding 指针在对象移动后才写入，不会有信丢失，因此无需占用额外的空间来记录 forwarding 指针；<br>内存访问模式可预测，支持预取，进而提升回收器的告诉缓存友好性；</td>
+<td>重排对象为任意顺序，破坏了赋值器的局部性；<br>受制于“所有对象大小最好一致”的条件，如果对象大小不一致，在移动过程中还是难以避免产生碎片；</td>
+</tr>
+<tr>
+<td>Lisp2 算法</td>
+<td>可有效利用堆；</td>
+<td>需要在对象头中占用额外空间保存 forwarding指针；<br>整理过程需要进行三次遍历；</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h2><table>
+<thead>
+<tr>
+<th>算法</th>
+<th>优点</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>递归算法</td>
+<td>深度优先遍历，有引用关系的对象会被安排在堆中离彼此较近的位置，有利于提高高速缓存命中率；</td>
+<td>递归调用函数消耗栈空间；</td>
+</tr>
+<tr>
+<td>Cheney算法</td>
+<td>采用迭代实现，消除了递归带来的额外负担和栈消耗；<br>直接把堆空间作为队列，省去了额外的内存空间开销；</td>
+<td>由于广度优先遍历的特点，Cheney复制算法中无法将有引用关系的对象复制到相邻的位置，降低了高速缓存的命中率；</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h2><table>
+<thead>
+<tr>
+<th>算法</th>
+<th>优点</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>延迟引用计数（类似还包括合并引用计数）</td>
+<td>消除了操作局部变量时引用计数变更带来的开销；</td>
+<td>垃圾不能马上得到回收；<br>ZCT 与日志缓冲区等带来额外的空间开销；<br>没有解决循环引用的问题；</td>
+</tr>
+<tr>
+<td>1-bit 引用计数法</td>
+<td>不容易出现高速缓存缺失，因为它不需要在更新计数器时读取要引用的对象；不需要额外的给计数器留空间，节省了内存空间；</td>
+<td>如果有大量计数器溢出的对象，会给堆造成巨大的负担，甚至很难保证分块；</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>以上只是列出了各类垃圾回收算法中典型的一两种实现，实际上多年来有很多研究针对每个算法的局限性做针对性的研究，还有非常多很细化的改进算法有待学习。</p>
+<p>由于开这个系列的初衷，只是想拓宽一下自己对垃圾回收机制的了解，然而了解得越多越意识到这样一个主题若要深入研究下去，要学习的东西真的太多了。考虑到个人的精力，自己肯定做不到像研究生一样细啃论文，目前就先挖到这个尚浅的深度吧。</p>
+<hr>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><em>垃圾回收的算法与实现</em></li>
+<li><em>垃圾回收算法手册：自动内存管理的艺术</em></li>
 </ul>
 
       
@@ -407,7 +547,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Git/" rel="tag"># Git</a>
+            <a href="/tags/GC/" rel="tag"># GC</a>
           
         </div>
       
@@ -420,8 +560,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/09/ford-fulkerson/" rel="next" title="最大流问题和Ford-Fulkerson方法">
-                <i class="fa fa-chevron-left"></i> 最大流问题和Ford-Fulkerson方法
+              <a href="/2019/08/06/gc-mark-compact/" rel="next" title="GC算法梳理（四）标记-整理算法">
+                <i class="fa fa-chevron-left"></i> GC算法梳理（四）标记-整理算法
               </a>
             
           </div>
@@ -429,10 +569,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/19/kmp/" rel="prev" title="字符串搜索玩耍指南（一）- KMP算法">
-                字符串搜索玩耍指南（一）- KMP算法 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -600,7 +736,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#git-merge"><span class="nav-number">1.</span> <span class="nav-text">$ git merge</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#git-rebase"><span class="nav-number">2.</span> <span class="nav-text">$ git rebase</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Merging-or-rebasing"><span class="nav-number">3.</span> <span class="nav-text">Merging or rebasing?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#追踪式-VS-引用计数式"><span class="nav-number">1.</span> <span class="nav-text">追踪式 VS. 引用计数式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#移动式-VS-非移动式"><span class="nav-number">2.</span> <span class="nav-text">移动式 VS. 非移动式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四类基本算法的优缺点比较"><span class="nav-number">3.</span> <span class="nav-text">四类基本算法的优缺点比较</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四类基本算法的部分实现与优化"><span class="nav-number">4.</span> <span class="nav-text">四类基本算法的部分实现与优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#标记-清除算法"><span class="nav-number">4.1.</span> <span class="nav-text">标记-清除算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标记-整理算法"><span class="nav-number">4.2.</span> <span class="nav-text">标记-整理算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复制算法"><span class="nav-number">4.3.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用计数法"><span class="nav-number">4.4.</span> <span class="nav-text">引用计数法</span></a></li></ol></li></ol></div>
             
 
           </div>
