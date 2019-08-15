@@ -247,6 +247,153 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/05/js-bind-apply-call/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jane Liao">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jane">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/05/js-bind-apply-call/" itemprop="url">JavaScript - bind, apply, call</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-05T15:20:27+08:00">
+                2018-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Function.prototyp.bind<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func.bind(thisArg[, arg1[, arg2[, ...]]]);</span><br></pre></td></tr></table></figure></p>
+<p>bind()方法可以指定函数运行的上下文，bind的第一个参数用于绑定this的指向，其后的参数在函数真正调用时会被添加在实际调用的输入参数之前。<br>举个例子<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/05/js-bind-apply-call/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </p></div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/26/regularexpression-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1287,7 +1434,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/21/nodejs-7/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/31/may/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -1306,7 +1453,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/03/21/nodejs-7/" itemprop="url">Node学习（七）- Node中的错误处理</a></h1>
+                <a class="post-title-link" href="/2016/05/31/may/" itemprop="url">五月病</a></h1>
         
 
         <div class="post-meta">
@@ -1318,8 +1465,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-21T10:43:51+08:00">
-                2017-03-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-05-31T23:31:09+08:00">
+                2016-05-31
               </time>
             
 
@@ -1341,8 +1488,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">技术笔记</span>
+                  <a href="/categories/随笔/" itemprop="url" rel="index">
+                    <span itemprop="name">随笔</span>
                   </a>
                 </span>
 
@@ -1379,165 +1526,15 @@
 
       
         
-          <p>毕设中遇到了错误处理和参数检查相关的问题，一直以来这一块都不甚清楚，上网找到了一篇文章，介绍Node.js中处理错误的最佳实践，开篇提出的问题无比吻合我目前的疑惑。</p>
-<p><a href="https://www.joyent.com/node-js/production/design/errors" target="_blank" rel="noopener">英文原文：Error Handling in Node.js</a><br><a href="https://cnodejs.org/topic/55714dfac4e7fbea6e9a2e5d" target="_blank" rel="noopener">中文译文：[译] NodeJS 错误处理最佳实践</a></p>
-<p>以上是原文和译文，在这里是为了加深自身记忆摘取一些重点。<br>
+          <blockquote>
+<p>五月病，就是在春夏之交的五月份，因为理想期许和现实的差距，而产生的厌倦易疲乏的情绪问题。</p>
+</blockquote>
+<p>从4月底昂扬的斗志被对五一小长假的苏州之旅的无限期许攻陷开始，五月就陷入闲散而又带着一点点的疲乏的状态，大概这就是传说中的五月病，有病而又没有药的日子就这么一晃而过。</p>
+<p>月末最后半小时，我想还是按时间顺序写下些杂碎的字。</p>
+<h2 id="园林之旅"><a href="#园林之旅" class="headerlink" title="园林之旅"></a>园林之旅</h2><p>一直都对中国古建筑有着一份难以言说的着迷，无论是富丽堂皇的殿堂还是清雅朴拙的院落，都无一不失精巧别致。此去苏州，自是为了江南园林。五一假日并不是赏园的好时期，却仍是按捺不住向往之心。到底还是游客太多，喧嚣而拥挤，走马观花般，心中暗暗想着以后定是要挑着清净少人的淡季闲闲散散地，走走停停地，再来好生欣赏一番的。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/03/21/nodejs-7/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </p></div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/12/nodejs-6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jane Liao">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jane">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/03/12/nodejs-6/" itemprop="url">Node学习（六）- 内存控制（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-12T19:29:23+08:00">
-                2017-03-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">技术笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="高效使用内存"><a href="#高效使用内存" class="headerlink" title="高效使用内存"></a>高效使用内存</h2><h3 id="变量的主动释放"><a href="#变量的主动释放" class="headerlink" title="变量的主动释放"></a>变量的主动释放</h3><ul>
-<li>全局变量位于全局作用域中，要直到进程退出才释放，此时将导致引用的对象常驻内存（老生代中）。</li>
-<li>如果需要释放常驻内存的对象：<ul>
-<li>通过delete删除引用关系（在V8中通过delete删除对象可能干扰V8的优化，所以用赋值更好）</li>
-<li>将变量重新赋值，让旧的对象脱离引用关系</li>
-</ul>
-</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/12/nodejs-6/#more" rel="contents">
+            <a class="btn" href="/2016/05/31/may/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1588,7 +1585,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/11/nodejs-5/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/16/jane/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -1607,7 +1604,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/03/11/nodejs-5/" itemprop="url">Node学习（五）- 内存控制 - V8的垃圾回收与内存机制</a></h1>
+                <a class="post-title-link" href="/2016/05/16/jane/" itemprop="url">简</a></h1>
         
 
         <div class="post-meta">
@@ -1619,8 +1616,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-11T16:31:52+08:00">
-                2017-03-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-05-16T21:41:09+08:00">
+                2016-05-16
               </time>
             
 
@@ -1642,8 +1639,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">技术笔记</span>
+                  <a href="/categories/随笔/" itemprop="url" rel="index">
+                    <span itemprop="name">随笔</span>
                   </a>
                 </span>
 
@@ -1680,15 +1677,15 @@
 
       
         
-          <p>在Node中通过JavaScript使用内存时会发现只能使用部分内存（64位系统下约为1.4GB，32位系统性约为0.7GB）。这是因为Node基于V8构建，所以Node中JavaScript对象的分配都是通过V8自己的方式进行分配和管理的。</p>
-<h2 id="V8的对象分配"><a href="#V8的对象分配" class="headerlink" title="V8的对象分配"></a>V8的对象分配</h2><p>在V8中，所有的JavaScript对象都通过堆进行分配。如果已申请的堆空间内存不够分配，就继续申请堆内存直到堆的大小超过V8的限制为止。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/11/nodejs-5/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <p>一直都很想有一方小天地可以自己用来随意折腾，现实中也是，不过现实中的目标要实现暂时来讲还有点距离，那么就先在虚拟空间开拓一片吧~</p>
+<p><a href="http://janeldq.github.io" target="_blank" rel="noopener">简</a>，简至，治事简易，思想通达。</p>
+<blockquote>
+<p>万物之始,大道至简,衍化至繁</p>
+</blockquote>
+<p>曾经读到三毛的“我不求深刻，只求简单”，深为其触动，那样简简单单而又活得纯粹而潇洒的人生，实在是令人艳羡。<br>世间事物纷繁复杂，二十左右的年纪，实在是很容易行于其间迷了方向，挑花了眼，而我也确实正处于这个阶段，迷茫中思考着，辨识着，经历着，积累着。<br>浮躁的环境里，是一份许给自己的诺言，期冀自己能始终保有一颗至简、恬淡的初心，有一天，能真正走进通达透彻的境界。</p>
+
+          
         
       
     </div>
@@ -1726,7 +1723,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
   </nav>
 
 
@@ -1774,7 +1771,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">66</span>
+                  <span class="site-state-item-count">60</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1796,7 +1793,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

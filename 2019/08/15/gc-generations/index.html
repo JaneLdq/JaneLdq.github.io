@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Node,">
+  <meta name="keywords" content="GC,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="这个系列是阅读朴灵的《深入浅出Node.js》的摘要笔记。  异步编程的流程控制不那么符合线性思维 单线程模型+同步I/O -&amp;gt; CPU与I/O无法重叠进行，性能差 =&amp;gt; 方法一：使用多线程提升性能 -&amp;gt; 业务逻辑变复杂，同时引入了多线程调度上下文切换开销，锁与同步等问题； 方法二：通过C/C++调用操作系统底层接口，手工完成异步I/O -&amp;gt; 调试开发门槛高">
-<meta name="keywords" content="Node">
+<meta name="description" content="前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— 分代垃圾回收 (Generational garbage collection)。分代垃圾回收的基本思想就是根据">
+<meta name="keywords" content="GC">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Node学习（一）- 异步编程的优势与难点">
-<meta property="og:url" content="http://yoursite.com/2017/02/26/nodejs-1/index.html">
+<meta property="og:title" content="GC算法梳理（六）堆分区与分代垃圾回收">
+<meta property="og:url" content="http://yoursite.com/2019/08/15/gc-generations/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="这个系列是阅读朴灵的《深入浅出Node.js》的摘要笔记。  异步编程的流程控制不那么符合线性思维 单线程模型+同步I/O -&amp;gt; CPU与I/O无法重叠进行，性能差 =&amp;gt; 方法一：使用多线程提升性能 -&amp;gt; 业务逻辑变复杂，同时引入了多线程调度上下文切换开销，锁与同步等问题； 方法二：通过C/C++调用操作系统底层接口，手工完成异步I/O -&amp;gt; 调试开发门槛高">
+<meta property="og:description" content="前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— 分代垃圾回收 (Generational garbage collection)。分代垃圾回收的基本思想就是根据">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-12T14:28:22.208Z">
+<meta property="og:updated_time" content="2019-08-15T09:59:59.668Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Node学习（一）- 异步编程的优势与难点">
-<meta name="twitter:description" content="这个系列是阅读朴灵的《深入浅出Node.js》的摘要笔记。  异步编程的流程控制不那么符合线性思维 单线程模型+同步I/O -&amp;gt; CPU与I/O无法重叠进行，性能差 =&amp;gt; 方法一：使用多线程提升性能 -&amp;gt; 业务逻辑变复杂，同时引入了多线程调度上下文切换开销，锁与同步等问题； 方法二：通过C/C++调用操作系统底层接口，手工完成异步I/O -&amp;gt; 调试开发门槛高">
+<meta name="twitter:title" content="GC算法梳理（六）堆分区与分代垃圾回收">
+<meta name="twitter:description" content="前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— 分代垃圾回收 (Generational garbage collection)。分代垃圾回收的基本思想就是根据">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/02/26/nodejs-1/">
+  <link rel="canonical" href="http://yoursite.com/2019/08/15/gc-generations/">
 
 
 
 
 
-  <title>Node学习（一）- 异步编程的优势与难点 | Jane</title>
+  <title>GC算法梳理（六）堆分区与分代垃圾回收 | Jane</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/26/nodejs-1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/15/gc-generations/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Node学习（一）- 异步编程的优势与难点</h1>
+          <h1 class="post-title" itemprop="name headline">GC算法梳理（六）堆分区与分代垃圾回收</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-26T05:22:27+00:00">
-                2017-02-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-15T06:48:07+00:00">
+                2019-08-15
               </time>
             
 
@@ -342,37 +342,62 @@
       
 
       
-        <p>这个系列是阅读<strong>朴灵</strong>的<a href="https://book.douban.com/subject/25768396/" target="_blank" rel="noopener"><strong>《深入浅出Node.js》</strong></a>的摘要笔记。</p>
-<hr>
-<p>异步编程的流程控制不那么符合线性思维</p>
-<p>单线程模型+同步I/O -&gt; CPU与I/O无法重叠进行，性能差 <strong>=&gt;</strong> 方法一：使用多线程提升性能 -&gt; 业务逻辑变复杂，同时引入了多线程调度上下文切换开销，锁与同步等问题； 方法二：通过C/C++调用操作系统底层接口，手工完成异步I/O -&gt; 调试开发门槛高</p>
+        <p>前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。<br>事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— <strong>分代垃圾回收 (Generational garbage collection)</strong>。分代垃圾回收的基本思想就是根据对象的年龄进行分隔，优先回收更年轻的对象。</p>
+<p>接下来，我们稍微深入地聊一聊堆分区与分代垃圾回收那些事吧~</p>
 <a id="more"></a>
-<h2 id="异步编程的优势与难点"><a href="#异步编程的优势与难点" class="headerlink" title="异步编程的优势与难点"></a>异步编程的优势与难点</h2><h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h3><ol>
-<li>基于事件驱动的非阻塞I/O模型，使得CPU与I/O不互相依赖等待，资源利用更好</li>
-<li>对于网络应用（分布式、云），并行使得单点之间的组织更有效</li>
-<li>I/O密集型问题能手（计算密集型：可通过V8性能，C/C++扩展，合理调度进行优化）</li>
-</ol>
-<h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><ol>
-<li><p>异常处理<br>Node在处理异常上形成了一种约定：将异常作为回调函数的第一个实参传回，如果为空值，则表明异步调用没有抛出异常：</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aysnc(<span class="function"><span class="keyword">function</span> (<span class="params">err, results</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// TODO</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p> 当我们自行编写异步方法时，也要遵循如下原则：</p>
-<ul>
-<li>必须执行调用者传入的回调函数</li>
-<li><p>正确传递异常供调用者判断</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">async</span> = <span class="function"><span class="keyword">function</span>(<span class="params">callback</span>) </span>&#123;</span><br><span class="line">    process.nextTick(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> results = something;</span><br><span class="line">        <span class="keyword">if</span> (error) &#123;</span><br><span class="line">            <span class="keyword">return</span> callback(error);</span><br><span class="line">        &#125;</span><br><span class="line">        callback(<span class="literal">null</span>, results);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="为什么要进行分区"><a href="#为什么要进行分区" class="headerlink" title="为什么要进行分区"></a>为什么要进行分区</h1><p>将堆分割成多个分区，每个分区采用不同的管理策略通常能更好地利用结合对象的移动性、大小和类别等性质，获得更低的空间消耗、更简单的对象性质识别、改善垃圾回收效率、降低停顿时间、更好的局部性等。</p>
+<ol>
+<li><p><strong>移动性与分区</strong><br>对于一个混合回收器，识别哪些对象可移动、哪些对象不可移动或移动代价很大是十分必要的。对于移动式 GC，必须找到所有指向这个对象的引用；相反，如果是非移动式 GC，则只需要找到至少一个引用就够了。而当一个引用被传给一个根本不关心垃圾回收的程序库时，这个对象就不能被移动了。此时，要么这个对象被钉住不动，要么我们要保证在程序库访问期间不能在其所处空间执行垃圾回收。</p>
 </li>
+<li><p><strong>对象大小与分区</strong><br>移动大对象的代价可能比不移动而放弃消除碎片的代价大。因此，一个常用策略是将大小超过一定阈值的对象分配到一个专门的<strong>大对象空间 (Large object space, LOS)</strong> 中去，并使用像<strong>标记-清除</strong>这样的非移动式 GC 进行管理。（通常不会采用复制式 GC 回收大对象，因为为对象预留复制空间代价高昂。）</p>
+</li>
+<li><p><strong>对象生命周期与分区</strong><br>对于生命周期长且内存碎片对其并非急需处理的对象来说，可以将其保存在一个采用非移动 GC，偶尔会进行一趟扫描进行整理的空间；对于分配频率高、生命周期短、死亡率更高的对象则可以放到一个由份额皮速度快、回收代价小的复制式 GC 管理的空间中去。</p>
+</li>
+<li><p><strong>对象类别与分区</strong><br>将不同类别的对象进行物理隔离可以让“<strong>类型</strong>”这样的属性通过对象地址就可以识别，而无需读取对象的某一字段。这样做将所有共享相同属性的对象放在同一空间中，避免了在每个对象头部复制一套重复的属性。</p>
+</li>
+<li><p><strong>对象用途与分区</strong><br>回收器可能会根据对象的物理分布采取不同的处理策略。有研究者提出，在一个应用程序服务器中，作为客户端请求的一部分而初始化的远程对象往往比本地对象存活的时间长。通常，在一个采用分布式 GC 管理的系统中，最好能使用不同的策略管理远程和本地的对象和引用，因为访问远程对象的代价比本地大几个数量级。</p>
+</li>
+<li><p><strong>对象易变性与分区</strong><br>相对于存活时间较长的对象，新创建的对象往往被修改得更频繁，因此引用计数法就不太适用于这类频繁更新的对象。</p>
+</li>
+</ol>
+<hr>
+<h1 id="何时进行分区"><a href="#何时进行分区" class="headerlink" title="何时进行分区"></a>何时进行分区</h1><p>分区的决策既可以是静态 (编译器) 完成，可以动态进行。</p>
+<ul>
+<li><p><strong>静态分区</strong> - 通过对对象的类型、代码或者其他信息的分析，对象所属空间可以被静态的划定。（比如编译器预分配）</p>
+</li>
+<li><p><strong>动态分区</strong></p>
+<ul>
+<li><strong>在对象被创建时</strong> - 分配器会根据对象所需要的内存大小来决定对象是否要被分配到大对象空间中。</li>
+<li><strong>在垃圾回收期间</strong> - 例如在分代垃圾回收中，分区是由回收器动态执行的，当一个对象的年龄增长超过某个阈值的时候，这个对象就被从物理上或逻辑上移动到下一个分代的空间中。</li>
+<li><strong>当赋值器访问对象时</strong> - 在并发回收器中，赋值器访问对象的操作可能会被读屏障或写屏障居中调节，从而导致一个或多个对象被移动或标记。</li>
 </ul>
 </li>
-<li><p>函数嵌套过深<br> 例如网页渲染要求数据/模板/资源文件缺一不可（虽然三者之间并不依赖）等场景都会出现函数嵌套过深导致没有利用到异步I/O的并行优势</p>
-</li>
-<li><p>阻塞代码<br> JavaScript中没有sleep()这样的沉睡功能，如何阻塞代码（最通常的写法是<strong>空循环</strong>，但这样会持续占用CPU进行判断，破坏事件循环的调度，与真正的线程沉睡相去甚远）。<br> 处理方式：统一规划业务逻辑后，调用setTimeout()效果更好。</p>
-</li>
-<li><p>多线程编程<br> Node运行在服务器上，如果是多核CPU，单个Node进程实质上并没有充分利用多核CPU的。<br> 浏览器提出了<strong>Web Workers</strong>将JavaScript执行与UI渲染分离，更好的利用多核CPU为大量计算服务。Node借鉴于此，<strong>child_process</strong>是其基础API，<strong>cluster</strong>模块是更深层次的应用。</p>
-</li>
-<li><p>异步转同步<br> 目前Node中试图同步式编程并没有原声支持，需要借助库或编译等手段来实现。但对于异步调用，通过良好的流程控制，还是能够将逻辑梳理成顺序式的形式。</p>
-</li>
-</ol>
-
+</ul>
+<hr>
+<h1 id="分代垃圾回收"><a href="#分代垃圾回收" class="headerlink" title="分代垃圾回收"></a>分代垃圾回收</h1><p>分代垃圾回收的出现基于根据经验后得出的一条结论 —— <strong>大多数对象都在年轻时死亡</strong>，又被称为“<strong>弱分代假说 (Weak generational hypothesis)</strong>”。这一假说已在各种不同种类的编程范式和编程语言中得到证实。（事实证明，它们就是轻易地 go die 了，⊙︿⊙</p>
+<hr>
+<h2 id="新生代与老年代"><a href="#新生代与老年代" class="headerlink" title="新生代与老年代"></a>新生代与老年代</h2><p>分代垃圾回收按照对象的年龄 (age) 将其划分为不同的分代，同时将不同分代的对象置于堆中的不停区域。回收器会优先回收年轻代，对象的年龄随从垃圾回收中存活的次数递增，当年轻代中的对象年龄达到一定阈值，将被提升 (promote) 到更老的一代。</p>
+<p><strong>一些术语</strong></p>
+<ul>
+<li><strong>新生代 GC (Minor GC)</strong> - 在新生代中执行的 GC</li>
+<li><strong>对象提升 (Promotion)</strong> - 将新生代中的对象提升为老年代对象的过程</li>
+<li><strong>老年代 GC (Major GC)</strong> - 在老年代中执行的 GC</li>
+</ul>
+<p>下面我们将介绍由 David Ungar 于 1984 年在文章 *Generation Scavenging: A Non-disruptlve High Perfornm.nce</p>
+<h2 id="Storage-Reclamation-Algorithm-中提出的分代回收算法。"><a href="#Storage-Reclamation-Algorithm-中提出的分代回收算法。" class="headerlink" title="Storage Reclamation Algorithm* 中提出的分代回收算法。"></a>Storage Reclamation Algorithm* 中提出的分代回收算法。</h2><h2 id="Ungar-的分代垃圾回收"><a href="#Ungar-的分代垃圾回收" class="headerlink" title="Ungar 的分代垃圾回收"></a>Ungar 的分代垃圾回收</h2><p>Ungar 提出的分代垃圾回收将堆分为4个空间，三个用于新生代，一个用于老年代，它们分别是：</p>
+<ul>
+<li>NewSpace - 用于创建对象的空间，也就是进行分配的空间</li>
+<li>PastSurvivorSpace - 保存上一次 Minor GC 后存活的对象，相当于复制 GC 中的 From 空间</li>
+<li>FutureSurvivorSpace - 一个空的空间，相当于复制 GC 中的 To 空间</li>
+<li>OldSpace - 存放老年代对象的空间</li>
+</ul>
+<p>NewSpace 通常是 SurvivorSpace 的 N 倍，根据弱分代假说，绝大多数 NewSpace 中的对象都会死亡，因此这样分配空间有利于提高堆空间利用率。</p>
+<p>执行新生代 GC 会将 NewSpace 和 PastSurvivorSpace 中的活动对象复制到 FutureSurvivorSpace 中，然后清除这两个空间，最后将 PastSurvivorSpace 和 FutureSurvivorSpace交换，跟复制 GC 是一样的。</p>
+<p>这一过程中，如果发现新生代对象已经经历了一定次数的新生代 GC，它就会得到晋升，被复制到老年代中去。（小菜鸟变身老油条啦~ (ノ￣▽￣)</p>
+<p>如果老年代空间也满了，那就要执行老年代 GC。老年代 GC 可以采用标记-清除算法。</p>
+<hr>
+<h3 id="Remembered-Set-记录集"><a href="#Remembered-Set-记录集" class="headerlink" title="Remembered Set 记录集"></a>Remembered Set 记录集</h3>
       
     </div>
     
@@ -389,7 +414,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Node/" rel="tag"># Node</a>
+            <a href="/tags/GC/" rel="tag"># GC</a>
           
         </div>
       
@@ -402,8 +427,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/05/31/may/" rel="next" title="五月病">
-                <i class="fa fa-chevron-left"></i> 五月病
+              <a href="/2019/08/09/gc-algorithms-compare/" rel="next" title="GC算法梳理（五）概括与比较">
+                <i class="fa fa-chevron-left"></i> GC算法梳理（五）概括与比较
               </a>
             
           </div>
@@ -411,10 +436,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/02/28/nodejs-2/" rel="prev" title="Node学习（二）- 异步编程的解决方案（1）">
-                Node学习（二）- 异步编程的解决方案（1） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -493,7 +514,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">66</span>
+                  <span class="site-state-item-count">60</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -515,7 +536,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -582,7 +603,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#异步编程的优势与难点"><span class="nav-number">1.</span> <span class="nav-text">异步编程的优势与难点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优势"><span class="nav-number">1.1.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#难点"><span class="nav-number">1.2.</span> <span class="nav-text">难点</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要进行分区"><span class="nav-number">1.</span> <span class="nav-text">为什么要进行分区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#何时进行分区"><span class="nav-number">2.</span> <span class="nav-text">何时进行分区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分代垃圾回收"><span class="nav-number">3.</span> <span class="nav-text">分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新生代与老年代"><span class="nav-number">3.1.</span> <span class="nav-text">新生代与老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Storage-Reclamation-Algorithm-中提出的分代回收算法。"><span class="nav-number">3.2.</span> <span class="nav-text">Storage Reclamation Algorithm* 中提出的分代回收算法。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ungar-的分代垃圾回收"><span class="nav-number">3.3.</span> <span class="nav-text">Ungar 的分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Remembered-Set-记录集"><span class="nav-number">3.3.1.</span> <span class="nav-text">Remembered Set 记录集</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
