@@ -82,14 +82,14 @@
 <meta name="description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。  引用计数法引用计数法的基本实现很简单，它不像标记-清除算法那样有明确的 GC 操作，而是在创建对象时和对指针进行更新时同时完成引用计数器的更新。">
 <meta name="keywords" content="GC">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GC算法梳理（二）引用计数法">
+<meta property="og:title" content="GC算法笔记（二）引用计数法">
 <meta property="og:url" content="http://yoursite.com/2019/07/28/gc-reference-counting/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。  引用计数法引用计数法的基本实现很简单，它不像标记-清除算法那样有明确的 GC 操作，而是在创建对象时和对指针进行更新时同时完成引用计数器的更新。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-15T09:59:59.668Z">
+<meta property="og:updated_time" content="2019-08-15T15:25:30.324Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GC算法梳理（二）引用计数法">
+<meta name="twitter:title" content="GC算法笔记（二）引用计数法">
 <meta name="twitter:description" content="什么是垃圾？不可能再被任何途径使用的对象。 由此很容易想到采用引用计数的方法：让对象记录下有多少其他对象引用自己。当引用数为0时，对象就被该作为垃圾回收了。  引用计数法引用计数法的基本实现很简单，它不像标记-清除算法那样有明确的 GC 操作，而是在创建对象时和对指针进行更新时同时完成引用计数器的更新。">
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <title>GC算法梳理（二）引用计数法 | Jane</title>
+  <title>GC算法笔记（二）引用计数法 | Jane</title>
   
 
 
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">GC算法梳理（二）引用计数法</h1>
+          <h1 class="post-title" itemprop="name headline">GC算法笔记（二）引用计数法</h1>
         
 
         <div class="post-meta">
@@ -366,7 +366,7 @@
 <p>虽然引用计数法的缺点不少，但只要稍加改良，它还是一个非常实用的垃圾回收算法哒。</p>
 <p>下面我们就来看看基于最基本的引用计数的思想，又孵化出了哪些改进算法呢？</p>
 <hr>
-<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><h2 id="延迟引用计数法"><a href="#延迟引用计数法" class="headerlink" title="延迟引用计数法"></a>延迟引用计数法</h2><p>延迟引用计数法 (Deferred Reference Counting) 是由 <a href="https://en.wikipedia.org/wiki/L._Peter_Deutsch" target="_blank" rel="noopener">L.Peter Deutsch</a> 和 <a href="https://en.wikipedia.org/wiki/Daniel_G._Bobrow" target="_blank" rel="noopener">Daniel G. Bobrow</a> 1976 年在文章 <strong><a href="https://people.cs.umass.edu/~emery/classes/cmpsci691s-fall2004/papers/p522-deutsch.pdf" target="_blank" rel="noopener">An Efficient, Incremental, Automatic Garbage Collector</a></strong> 中提出来的。</p>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><h2 id="延迟引用计数法"><a href="#延迟引用计数法" class="headerlink" title="延迟引用计数法"></a>延迟引用计数法</h2><p>延迟引用计数法 (Deferred Reference Counting) 是由 <a href="https://en.wikipedia.org/wiki/L._Peter_Deutsch" target="_blank" rel="noopener">L.Peter Deutsch</a> 和 <a href="https://en.wikipedia.org/wiki/Daniel_G._Bobrow" target="_blank" rel="noopener">Daniel G. Bobrow</a> 1976 年在文章 <strong><a href="https://en.wikipedia.org/wiki/Reference_counting" target="_blank" rel="noopener">An Efficient, Incremental, Automatic Garbage Collector</a></strong> 中提出来的。</p>
 <p>前面提到引用计数法的一大缺点就是计数器值更新过于频繁，每一次对根引用的更新都要触发所有子节点引用数的更新。延迟引用计数法就是针对这一点进行的优化。<br>延迟引用计数法的改进基本思路主要是以下两点：</p>
 <ul>
 <li><strong>局部变量引用（variable reference）不计入引用计数</strong>，也就是说那些只被本地变量（操作栈和寄存器中）引用的对象不在延迟引用计数法管理范围内，默认他们随着栈弹出消亡，只有当堆中对象的引用计数发生变化时才进行更新。</li>
@@ -440,7 +440,7 @@
 <ul>
 <li><em>垃圾回收的算法与实现</em></li>
 <li><a href="https://en.wikipedia.org/wiki/Reference_counting" target="_blank" rel="noopener">Reference Counting</a></li>
-<li><a href="https://people.cs.umass.edu/~emery/classes/cmpsci691s-fall2004/papers/p522-deutsch.pdf" target="_blank" rel="noopener">An Efficient, Incremental, Automatic Garbage Collector</a></li>
+<li>L. Peter Deutsch and Daniel G. Bobrow, <em>An Efficient, Incremental, Automatic Garbage Collector</em>, 1976</li>
 </ul>
 
       
@@ -472,8 +472,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/20/gc-mark-sweep/" rel="next" title="GC算法梳理（一）标记-清除算法">
-                <i class="fa fa-chevron-left"></i> GC算法梳理（一）标记-清除算法
+              <a href="/2019/07/20/gc-mark-sweep/" rel="next" title="GC算法笔记（一）标记-清除算法">
+                <i class="fa fa-chevron-left"></i> GC算法笔记（一）标记-清除算法
               </a>
             
           </div>
@@ -482,8 +482,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/07/31/gc-copying/" rel="prev" title="GC算法梳理（三）复制算法">
-                GC算法梳理（三）复制算法 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/07/31/gc-copying/" rel="prev" title="GC算法笔记（三）复制算法">
+                GC算法笔记（三）复制算法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
