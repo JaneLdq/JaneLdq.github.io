@@ -339,7 +339,9 @@
 
       
         
-          <p>前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。<br>事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— <strong>分代垃圾回收 (Generational garbage collection)</strong>。分代垃圾回收的基本思想就是根据对象的年龄进行分隔，优先回收更年轻的对象。</p>
+          <p>写在前面：<br>因为了解越多发现自己不懂的越多，连整理归纳笔记都变得吃力了起来，所以「GC算法系列」就暂时告一段落了。希望沉淀一段时间后，回头再看的时候会有更深刻的理解。</p>
+<hr>
+<p>前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。<br>事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— <strong>分代垃圾回收 (Generational garbage collection)</strong>。分代垃圾回收的基本思想就是根据对象的年龄进行分隔，优先回收更年轻的对象。</p>
 <p>接下来，我们稍微深入地聊一聊堆分区与分代垃圾回收那些事吧~</p>
           <!--noindex-->
           <div class="post-button text-center">
@@ -1805,7 +1807,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">58</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1816,7 +1818,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>

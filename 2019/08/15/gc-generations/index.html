@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— 分代垃圾回收 (Generational garbage collection)。分代垃圾回收的基本思想就是根据">
+<meta name="description" content="写在前面：因为了解越多发现自己不懂的越多，连整理归纳笔记都变得吃力了起来，所以「GC算法系列」就暂时告一段落了。希望沉淀一段时间后，回头再看的时候会有更深刻的理解。  前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收">
 <meta name="keywords" content="GC">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GC算法笔记（六）堆分区与分代垃圾回收">
 <meta property="og:url" content="http://yoursite.com/2019/08/15/gc-generations/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— 分代垃圾回收 (Generational garbage collection)。分代垃圾回收的基本思想就是根据">
+<meta property="og:description" content="写在前面：因为了解越多发现自己不懂的越多，连整理归纳笔记都变得吃力了起来，所以「GC算法系列」就暂时告一段落了。希望沉淀一段时间后，回头再看的时候会有更深刻的理解。  前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-26T14:29:33.859Z">
+<meta property="og:updated_time" content="2019-09-02T00:43:42.451Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GC算法笔记（六）堆分区与分代垃圾回收">
-<meta name="twitter:description" content="前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— 分代垃圾回收 (Generational garbage collection)。分代垃圾回收的基本思想就是根据">
+<meta name="twitter:description" content="写在前面：因为了解越多发现自己不懂的越多，连整理归纳笔记都变得吃力了起来，所以「GC算法系列」就暂时告一段落了。希望沉淀一段时间后，回头再看的时候会有更深刻的理解。  前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收">
 
 
 
@@ -342,7 +342,9 @@
       
 
       
-        <p>前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。<br>事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— <strong>分代垃圾回收 (Generational garbage collection)</strong>。分代垃圾回收的基本思想就是根据对象的年龄进行分隔，优先回收更年轻的对象。</p>
+        <p>写在前面：<br>因为了解越多发现自己不懂的越多，连整理归纳笔记都变得吃力了起来，所以「GC算法系列」就暂时告一段落了。希望沉淀一段时间后，回头再看的时候会有更深刻的理解。</p>
+<hr>
+<p>前几篇笔记介绍了几种基本的垃圾回收算法，那么是不是堆上所有的对象都是由相同的垃圾算法管理的呢？而且所有的垃圾都是在同一时间得到回收的呢？答案自然是否定的。<br>事实上，根据不同对象的存活特性，如果我们针对性地处理不同的对象的话，对垃圾回收的性能提升是非常有效的。目前应用最广泛的例子就是 —— <strong>分代垃圾回收 (Generational garbage collection)</strong>。分代垃圾回收的基本思想就是根据对象的年龄进行分隔，优先回收更年轻的对象。</p>
 <p>接下来，我们稍微深入地聊一聊堆分区与分代垃圾回收那些事吧~</p>
 <a id="more"></a>
 <hr>
@@ -378,13 +380,15 @@
 <h1 id="分代垃圾回收"><a href="#分代垃圾回收" class="headerlink" title="分代垃圾回收"></a>分代垃圾回收</h1><p>分代垃圾回收的出现基于根据经验后得出的一条结论 —— <strong>大多数对象都在年轻时死亡</strong>，又被称为“<strong>弱分代假说 (Weak generational hypothesis)</strong>”。这一假说已在各种不同种类的编程范式和编程语言中得到证实。（事实证明，它们就是轻易地 go die 了，⊙︿⊙</p>
 <hr>
 <h2 id="新生代与老年代"><a href="#新生代与老年代" class="headerlink" title="新生代与老年代"></a>新生代与老年代</h2><p>分代垃圾回收按照对象的年龄 (age) 将其划分为不同的分代，同时将不同分代的对象置于堆中的不同区域。回收器会优先回收新生代，对象的年龄随从垃圾回收中存活的次数递增，当年新生代中的对象年龄达到一定阈值，将被提升 (promote) 到更老的一代。</p>
-<p><strong>一些术语</strong></p>
+<p><strong>「一些术语」</strong></p>
 <ul>
 <li><strong>新生代 GC (Minor GC)</strong> - 在新生代中执行的 GC</li>
 <li><strong>对象提升 (Promotion)</strong> - 将新生代中的对象提升为老年代对象的过程</li>
 <li><strong>老年代 GC (Major GC)</strong> - 在老年代中执行的 GC</li>
 </ul>
-<h2 id="下面我们将介绍由-David-Ungar-于-1984-年在文章-Generation-Scavenging-A-Non-disruptlve-High-Perfornmance-Storage-Reclamation-Algorithm-中提出的分代回收算法。"><a href="#下面我们将介绍由-David-Ungar-于-1984-年在文章-Generation-Scavenging-A-Non-disruptlve-High-Perfornmance-Storage-Reclamation-Algorithm-中提出的分代回收算法。" class="headerlink" title="下面我们将介绍由 David Ungar 于 1984 年在文章 Generation Scavenging: A Non-disruptlve High Perfornmance Storage Reclamation Algorithm 中提出的分代回收算法。"></a>下面我们将介绍由 David Ungar 于 1984 年在文章 <em>Generation Scavenging: A Non-disruptlve High Perfornmance Storage Reclamation Algorithm</em> 中提出的分代回收算法。</h2><h2 id="Ungar-的分代垃圾回收"><a href="#Ungar-的分代垃圾回收" class="headerlink" title="Ungar 的分代垃圾回收"></a>Ungar 的分代垃圾回收</h2><p>Ungar 提出的分代垃圾回收将堆分为4个空间，三个用于新生代，一个用于老年代，它们分别是：</p>
+<p>下面我们将介绍由 David Ungar 于 1984 年在文章 <em>Generation Scavenging: A Non-disruptlve High Perfornmance Storage Reclamation Algorithm</em> 中提出的分代回收算法。</p>
+<hr>
+<h2 id="Ungar-的分代垃圾回收"><a href="#Ungar-的分代垃圾回收" class="headerlink" title="Ungar 的分代垃圾回收"></a>Ungar 的分代垃圾回收</h2><p>Ungar 提出的分代垃圾回收将堆分为4个空间，三个用于新生代，一个用于老年代，它们分别是：</p>
 <ul>
 <li><strong>NewSpace</strong> - 用于创建对象的空间，也就是进行分配的空间</li>
 <li><strong>PastSurvivorSpace</strong> - 保存上一次 Minor GC 后存活的对象，相当于复制 GC 中的 From 空间</li>
@@ -429,7 +433,8 @@
 </ul>
 <hr>
 <p>分代垃圾回收的策略只是进行堆区分以提升回收效率的方式之一，不过也是目前使用最为广泛的分区策略。除此之外还有很多其他的分区策略。甚至是分代策略自身也有很多需要考虑的细节。</p>
-<p>不得不说，《垃圾回收算法手册：自动内存管理的艺术》这本书涉猎得内容很深且广，很多章节之间会有跳跃着的关联，而且作者经常就着一个小话题会给出很多相关的论文或观点，不愧是被称之为艺术的话题。相比之下《垃圾回收的算法与实现》这本书对小白更友好一些，介绍的都是算法最基础的思路和实现。两本书的阅读难度系数完全不是一个档次，前者对于我目前的水平还是有点消化不了。</p>
+<p>不得不说，《垃圾回收算法手册：自动内存管理的艺术》这本书涉猎得内容很深且广，很多章节之间会有跳跃着的关联，而且作者经常就着一个小话题会给出很多相关的论文或观点，不愧是被称之为艺术的话题。相比之下《垃圾回收的算法与实现》这本书对小白更友好一些，介绍的都是算法最基础的思路和实现。两本书的阅读难度系数完全不是一个档次，前者对于我目前的水平还是挺吃力的。</p>
+<p>后会有期～</p>
 <hr>
 <p><strong>参考资料</strong></p>
 <ul>
@@ -555,7 +560,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">58</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -566,7 +571,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -644,7 +649,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要进行分区"><span class="nav-number">1.</span> <span class="nav-text">为什么要进行分区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#何时进行分区"><span class="nav-number">2.</span> <span class="nav-text">何时进行分区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分代垃圾回收"><span class="nav-number">3.</span> <span class="nav-text">分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新生代与老年代"><span class="nav-number">3.1.</span> <span class="nav-text">新生代与老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下面我们将介绍由-David-Ungar-于-1984-年在文章-Generation-Scavenging-A-Non-disruptlve-High-Perfornmance-Storage-Reclamation-Algorithm-中提出的分代回收算法。"><span class="nav-number">3.2.</span> <span class="nav-text">下面我们将介绍由 David Ungar 于 1984 年在文章 Generation Scavenging: A Non-disruptlve High Perfornmance Storage Reclamation Algorithm 中提出的分代回收算法。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ungar-的分代垃圾回收"><span class="nav-number">3.3.</span> <span class="nav-text">Ungar 的分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#记录集"><span class="nav-number">3.3.1.</span> <span class="nav-text">记录集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#写屏障"><span class="nav-number">3.3.2.</span> <span class="nav-text">写屏障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象结构"><span class="nav-number">3.3.3.</span> <span class="nav-text">对象结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法伪码"><span class="nav-number">3.3.4.</span> <span class="nav-text">算法伪码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多分代"><span class="nav-number">3.4.</span> <span class="nav-text">多分代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分代回收的优缺点"><span class="nav-number">3.5.</span> <span class="nav-text">分代回收的优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">3.5.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">3.5.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要进行分区"><span class="nav-number">1.</span> <span class="nav-text">为什么要进行分区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#何时进行分区"><span class="nav-number">2.</span> <span class="nav-text">何时进行分区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分代垃圾回收"><span class="nav-number">3.</span> <span class="nav-text">分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新生代与老年代"><span class="nav-number">3.1.</span> <span class="nav-text">新生代与老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ungar-的分代垃圾回收"><span class="nav-number">3.2.</span> <span class="nav-text">Ungar 的分代垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#记录集"><span class="nav-number">3.2.1.</span> <span class="nav-text">记录集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#写屏障"><span class="nav-number">3.2.2.</span> <span class="nav-text">写屏障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象结构"><span class="nav-number">3.2.3.</span> <span class="nav-text">对象结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法伪码"><span class="nav-number">3.2.4.</span> <span class="nav-text">算法伪码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多分代"><span class="nav-number">3.3.</span> <span class="nav-text">多分代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分代回收的优缺点"><span class="nav-number">3.4.</span> <span class="nav-text">分代回收的优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">3.4.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">3.4.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
