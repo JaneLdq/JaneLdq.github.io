@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Authorization,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 本文想先聊聊 OAuth 2.0，主要包含以下几个问题：  为什么会有 OAuth 2.0 的诞生 OAuth 2.0 是什么，它到底干了什么   为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端携带用户的">
+<meta name="keywords" content="Authorization">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈 OAuth 2.0 授权">
+<meta property="og:url" content="http://yoursite.com/2019/10/21/oauth-intro/index.html">
+<meta property="og:site_name" content="Jane">
+<meta property="og:description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 本文想先聊聊 OAuth 2.0，主要包含以下几个问题：  为什么会有 OAuth 2.0 的诞生 OAuth 2.0 是什么，它到底干了什么   为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端携带用户的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-21T10:03:40.739Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈 OAuth 2.0 授权">
+<meta name="twitter:description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 本文想先聊聊 OAuth 2.0，主要包含以下几个问题：  为什么会有 OAuth 2.0 的诞生 OAuth 2.0 是什么，它到底干了什么   为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端携带用户的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/21/oauth-intro/">
+
+
+
+
+
+  <title>浅谈 OAuth 2.0 授权 | Jane</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jane</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn & Live</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/21/oauth-intro/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jane Liao">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jane">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅谈 OAuth 2.0 授权</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-21T06:04:34+00:00">
+                2019-10-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。</p>
+<p>本文想先聊聊 OAuth 2.0，主要包含以下几个问题：</p>
+<ol>
+<li>为什么会有 OAuth 2.0 的诞生</li>
+<li>OAuth 2.0 是什么，它到底干了什么</li>
+</ol>
+<hr>
+<h2 id="为什么会有-OAuth-2-0-的诞生"><a href="#为什么会有-OAuth-2-0-的诞生" class="headerlink" title="为什么会有 OAuth 2.0 的诞生"></a>为什么会有 OAuth 2.0 的诞生</h2><p>在传统的客户端-服务器认证模型中，由<strong>客户端</strong>携带<strong>用户</strong>的<strong>认证凭证（credentials）</strong>来访问<strong>服务端</strong>受保护的<strong>资源</strong>，而当有第三方应用想访问服务端资源时，我们最容易想到的方式是什么呢？</p>
+<p>让第三方应用与客户端<strong>共享认证凭证</strong>。</p>
+<p>而上述这种做法的弊端和局限性也很明显：</p>
+<ul>
+<li>第三方应用需要自己保存用户凭证（安全隐患非常大，尤其在使用明码的情况下）</li>
+<li>服务端要支持用户名密码验证机制，而密码本身就存在安全弱点</li>
+<li>第三方应用获得的访问权限过大，而客户端没有办法限制授权的有效期和范围</li>
+<li>用户如果要收回对某一第三方应用的授权，就只能修改密码，而这将同时收回所有其他第三方应用的授权</li>
+<li>只要有一个第三方应用被攻击了，那么用户的认证凭证就泄漏了，那么所有被这个密码保护的数据也将被泄漏。</li>
+</ul>
+<p>OAuth 的出现就是为了解决这些问题。OAuth 2.0 表示它是 OAuth 的第二个版本，注意 OAuth 2.0 和 OAuth 1.0 是不兼容的，本文只讨论 OAuth 2.0。</p>
+<a id="more"></a>
+<hr>
+<h2 id="OAuth-2-0-中的四种角色"><a href="#OAuth-2-0-中的四种角色" class="headerlink" title="OAuth 2.0 中的四种角色"></a>OAuth 2.0 中的四种角色</h2><p>那么，在具体了解 OAuth 2.0 的运作机制前，我们需要先认识 OAuth 2.0 中定义的四种角色。</p>
+<ul>
+<li><strong>Resource Owner</strong> - 资源拥有者，拥有给其他资源请求方授权的能力的角色，通常指用户。</li>
+<li><strong>Resource Server</strong> - 资源服务器，存储用户资源的服务器。</li>
+<li><strong>Client</strong> - 客户端，即上面所提到的第三方应用，在用户授权下以用户身份访问受保护资源的应用。</li>
+<li><strong>Authorization Server</strong> - 授权服务器，在成功认证资源拥有者并获得授权后向客户端发送 Access Token（客户端通过 Access Token 向资源服务器请求资源）。</li>
+</ul>
+<p>Resource Server 和 Authorization Server 可以是一台服务器，也可以是不同的服务器。</p>
+<hr>
+<h2 id="OAuth-2-0-授权过程"><a href="#OAuth-2-0-授权过程" class="headerlink" title="OAuth 2.0 授权过程"></a>OAuth 2.0 授权过程</h2><p>下图来自 <a href="https://tools.ietf.org/html/rfc6749" target="_blank" rel="noopener">The OAuth 2.0 Authorization Framework</a></p>
+<pre><code>+--------+                               +---------------+
+|        |--(1)- Authorization Request -&gt;|   Resource    |
+|        |                               |     Owner     |
+|        |&lt;-(2)-- Authorization Grant ---|               |
+|        |                               +---------------+
+|        |
+|        |                               +---------------+
+|        |--(3)-- Authorization Grant --&gt;| Authorization |
+| Client |                               |     Server    |
+|        |&lt;-(4)----- Access Token -------|               |
+|        |                               +---------------+
+|        |
+|        |                               +---------------+
+|        |--(5)----- Access Token ------&gt;|    Resource   |
+|        |                               |     Server    |
+|        |&lt;-(6)--- Protected Resource ---|               |
++--------+                               +---------------+
+</code></pre><p>上图给出了一个概括性的 OAuth 2.0 授权过程，简单描述如下：</p>
+<ol>
+<li>Client 向 Resource Owner 请求授权。授权请求可以直接发给 Resource Onwer，但更好的方式是以 Authorization Server 作为中介间接请求。</li>
+<li>Client 收到 Authorization Grant，一般是 OAuth 协议定义的四种授权类型（Grant Type，见下文），也可以是扩展授权类型。授权类型取决于 Client 请求授权的方式以及 Authorization Server 支持的类型。</li>
+<li>Client 向 Authorization Server 的请求认证，并提供 Authorization Grant 以获取 Access Token。</li>
+<li>Authorization Server 通过 Client 的认证，并且验证它的授权，如果合法，就向它提供 Access Token。</li>
+<li>Client 拿着 Access Token 向 Resource Server 请求访问受保护的资源。</li>
+<li>Resource Server 验证 Access Token，如果合法就满足请求。 </li>
+</ol>
+<p>这里的 1 - 4 四个步骤根据授权类型（Grant Type）的不同，具体的流程也不同，我们将在下文详细介绍。</p>
+<p>看完这个流程是不是瞬间冒出十万个为什么？</p>
+<ul>
+<li>Authorization Server 与 Resource Owner 之间的信任如何建立？Authorization Server 怎么知道这个授权合不合法呢？</li>
+<li>Authorization Server 与 Resource Server 之间的信任如何建立？Resource Server 怎么验证 Access Token 是可信任且合法的呢？</li>
+<li>Authorization Server 怎么认证一个 Client ？Client 的信息哪里来？<!--
+  * Client的信息要事先注册在Authorization Server中，最基本的信息包含 Client 的类型和 redirect URL，注册完成后，Authorization Server 会为每个 Client 生成唯一的 ID。如果Client的类型是 confidential 的话，那么还会生成一组 client credentials，它可能是密码，也可能是 public/private key pair，具体取决于 Client 和 Authorization Server间的认证方式。而这一认证形式在OAuth 中并没有具体规定，在实际应用中应该根据安全性需求自行选择。--></li>
+<li>…</li>
+</ul>
+<p>别着急，在我们了解授权类型的过程中，或许能找到某些问题的答案。<br><!--
+OAuth 2.0 协议通过引入 Authorization Server 这个角色，在 Resource Owner, Resource Server 和 Client 之间引入了一个单独的授权层，从而将用户凭证（Credentials）从 Client 和 Resource Server 的交互中隔离开来。Client **不需要（也不应该）获取 Resource Owner 的认证凭证**，而是通过 Authorization Server 的介入，在获得用户授权后，拿着 Authorization Server 生成的 **Access Token** 向 Resource Server 请求受保护的资源。--></p>
+<hr>
+<h2 id="OAuth-2-0-的四种授权类型"><a href="#OAuth-2-0-的四种授权类型" class="headerlink" title="OAuth 2.0 的四种授权类型"></a>OAuth 2.0 的四种授权类型</h2><h3 id="Authorization-Code"><a href="#Authorization-Code" class="headerlink" title="Authorization Code"></a>Authorization Code</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Authorization/" rel="tag"># Authorization</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/18/util-class/" rel="next" title="实现Util类的最佳实践">
+                <i class="fa fa-chevron-left"></i> 实现Util类的最佳实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="Jane Liao">
+            
+              <p class="site-author-name" itemprop="name">Jane Liao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/JaneLdq" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:janeldq@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                胖又萌
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kasswang.cn/" title="卡斯奈" target="_blank">卡斯奈</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://1016990109.github.io/" title="七秒悲伤" target="_blank">七秒悲伤</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么会有-OAuth-2-0-的诞生"><span class="nav-number">1.</span> <span class="nav-text">为什么会有 OAuth 2.0 的诞生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAuth-2-0-中的四种角色"><span class="nav-number">2.</span> <span class="nav-text">OAuth 2.0 中的四种角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAuth-2-0-授权过程"><span class="nav-number">3.</span> <span class="nav-text">OAuth 2.0 授权过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAuth-2-0-的四种授权类型"><span class="nav-number">4.</span> <span class="nav-text">OAuth 2.0 的四种授权类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Authorization-Code"><span class="nav-number">4.1.</span> <span class="nav-text">Authorization Code</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jane Liao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
