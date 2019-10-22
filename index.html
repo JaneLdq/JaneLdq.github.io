@@ -266,7 +266,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/21/oauth-intro/" itemprop="url">浅谈 OAuth 2.0 授权</a></h1>
+                <a class="post-title-link" href="/2019/10/21/oauth-intro/" itemprop="url">浅谈 OAuth 2.0 (一)</a></h1>
         
 
         <div class="post-meta">
@@ -340,11 +340,8 @@
       
         
           <p>一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。</p>
-<p>本文想先聊聊 OAuth 2.0，主要包含以下几个问题：</p>
-<ol>
-<li>为什么会有 OAuth 2.0 的诞生</li>
-<li>OAuth 2.0 是什么，它到底干了什么</li>
-</ol>
+<p>（ˊ_&gt;ˋ 原本就想写个简单的概述，但那样好像没什么意义，而且内容也实在是有点多…）</p>
+<p>第一篇就先聊聊 OAuth 诞生的背景和其中的一些基本概念吧。</p>
 <hr>
 <h2 id="为什么会有-OAuth-2-0-的诞生"><a href="#为什么会有-OAuth-2-0-的诞生" class="headerlink" title="为什么会有 OAuth 2.0 的诞生"></a>为什么会有 OAuth 2.0 的诞生</h2><p>在传统的客户端-服务器认证模型中，由<strong>客户端</strong>携带<strong>用户</strong>的<strong>认证凭证（credentials）</strong>来访问<strong>服务端</strong>受保护的<strong>资源</strong>，而当有第三方应用想访问服务端资源时，我们最容易想到的方式是什么呢？</p>
 <p>让第三方应用与客户端<strong>共享认证凭证</strong>。</p>
@@ -356,7 +353,8 @@
 <li>用户如果要收回对某一第三方应用的授权，就只能修改密码，而这将同时收回所有其他第三方应用的授权</li>
 <li>只要有一个第三方应用被攻击了，那么用户的认证凭证就泄漏了，那么所有被这个密码保护的数据也将被泄漏。</li>
 </ul>
-<p>OAuth 的出现就是为了解决这些问题。OAuth 2.0 表示它是 OAuth 的第二个版本，注意 OAuth 2.0 和 OAuth 1.0 是不兼容的，本文只讨论 OAuth 2.0。</p>
+<p>OAuth 的出现就是为了解决这些问题。OAuth 并不是框架或工具，而是一组基于 HTTP 协议的标准，它定义了一系列与授权场景相关的概念和规则，针对不同的应用场景给定了几类标准的授权过程。下面就让我们一起揭开 OAuth 神秘的面纱吧。</p>
+<p><em>注：本文将只介绍 OAuth 2.0，OAuth 2.0 和 OAuth 1.0 并不兼容。</em></p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/10/21/oauth-intro/#more" rel="contents">
