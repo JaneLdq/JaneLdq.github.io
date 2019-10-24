@@ -82,15 +82,15 @@
 <meta name="description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 （ˊ_&amp;gt;ˋ 原本就想写个简单的概述，但那样好像没什么意义，而且内容也实在是有点多…） 第一篇就先聊聊 OAuth 诞生的背景和其中的一些基本概念吧。  为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端">
 <meta name="keywords" content="Authorization">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈 OAuth 2.0 (一)">
+<meta property="og:title" content="浅谈 OAuth 2.0 (一) - 基本概念">
 <meta property="og:url" content="http://yoursite.com/2019/10/21/oauth-intro/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 （ˊ_&amp;gt;ˋ 原本就想写个简单的概述，但那样好像没什么意义，而且内容也实在是有点多…） 第一篇就先聊聊 OAuth 诞生的背景和其中的一些基本概念吧。  为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/oauth-roles.svg">
-<meta property="og:updated_time" content="2019-10-23T07:19:06.447Z">
+<meta property="og:updated_time" content="2019-10-24T09:56:04.241Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈 OAuth 2.0 (一)">
+<meta name="twitter:title" content="浅谈 OAuth 2.0 (一) - 基本概念">
 <meta name="twitter:description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 （ˊ_&amp;gt;ˋ 原本就想写个简单的概述，但那样好像没什么意义，而且内容也实在是有点多…） 第一篇就先聊聊 OAuth 诞生的背景和其中的一些基本概念吧。  为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端">
 <meta name="twitter:image" content="http://yoursite.com/uploads/images/oauth-roles.svg">
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>浅谈 OAuth 2.0 (一) | Jane</title>
+  <title>浅谈 OAuth 2.0 (一) - 基本概念 | Jane</title>
   
 
 
@@ -272,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">浅谈 OAuth 2.0 (一)</h1>
+          <h1 class="post-title" itemprop="name headline">浅谈 OAuth 2.0 (一) - 基本概念</h1>
         
 
         <div class="post-meta">
@@ -438,59 +438,6 @@
 </ul>
 <p>当脑海中有了这些相对零散的基本概念后，下一步，就是将它们串联在一起，组成 OAuth 2.0 中最核心的部分 —— 四种授权类型。</p>
 <p>我们下文见~</p>
-<!--
-
----
-## OAuth 2.0 中的 2 类客户端
-
-* Public
-* Confidential
-
----
-## OAuth 2.0 的四种授权类型
-客户端在获取 Access Token 之前要先从用户那里获得授权，OAuth 2.0 定义了四种获取授权的方式：
-* Authorization Code
-* Implicit
-* Resource Owner Password Credentials
-* Client Credentials
-
-除此之外，OAuth 2.0 还支持自定义扩展授权类型。
-
-下面我们就分别来看看这四种授权类型的授权流程是怎样的吧。
-
-### Authorization Code
-授权码这一授权类型既可以用来获取 Access Token，也可以用来获取 Refresh Token。
-
-先看图：
-![authorization code grant][2]
-
-1. 客户端通过 User Agent（通常指浏览器，这一组件在上图中没有体现）向授权服务器发起获取授权码的请求，在请求中会带上 `client_id`, `scope`, `state` 和一个在获取授权码后要跳转到的 `redirect_uri`（请记住这个URL，我们还会再见到它好几次）。
-2. 授权服务器将 User Agent 重定向到用户认证页面，对用户进行认证，并授权给客户端，然后授权服务器将 User Agent 重定向到刚刚 客户端在请求中指定的那个 `redirect_uri`，并附加上授权码和客户端在请求中带上的`state`。（用户也可以在这一步拒绝授权，那么在这一步将返回Error Response）。
-3. 客户端带着授权码，`redirect_uri` 和 `client_id` 向授权服务器请求 Access Token，在这一步，如果客户端之前注册时有生成 Client Credential，那么授权服务器会对客户端进行认证，并且还要校验这个请求中的 `redirect_uri` 和获取授权码的请求中的 `redirect_uri` 是否一致。
-4. 如果客户端认证成功，其他校验也都通过了，那么授权服务器就会返回一个 Access Token，有可能还附带一个 Refresh Token。
-
-在 Authorization Code 这一授权类型中，**授权服务器充当了客户端和用户之间的媒介，在整个过程中，用户只与授权服务器交互完成认证，因此用户的认证信息完全不需要与客户端共享。**
-
-
----
-### Implicit
-一种为浏览器客户端简化的授权流程，客户端使用脚本语言直接请求授权，跳过了“获取授权码”这个步骤。
-
-// TODO 画图好累哦，明天再来填坑
-
----
-### Resource Owner Password Credentials
-用户密码认证，直接使用用户的用户名密码进行认证。这种方式只应该在高度信任的情况下使用，比如客户端是操作系统的一部分的情况，或者其他认证类型不可行的时候。
-即使这种情况用到了用户的用户密码，也应该只是在第一次请求时用于获取 Access Token 和 Refresh Token， 并将 Token 设定为长生命周期的 Token 以便于后续操作，这样可以避免在客户端保存用户密码。
-
-// TODO 图
-
----
-### Client Credentials
-这一类型中客户端以自己的名义，而不是以用户的名义向资源服务器请求资源，因此在获取 Access Token 时客户端直接采用自己的认证信息进行认证就可以了。这一模式从本质上来讲，客户端自身就是“资源拥有者”，因此并不存在是授权问题。
-
-// TODO 图
--->
 <hr>
 <p><strong>参考资料</strong></p>
 <ul>
@@ -539,6 +486,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/24/oauth-grant-type/" rel="prev" title="浅谈 OAuth 2.0 (二) - 授权类型">
+                浅谈 OAuth 2.0 (二) - 授权类型 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -617,7 +568,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">61</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
