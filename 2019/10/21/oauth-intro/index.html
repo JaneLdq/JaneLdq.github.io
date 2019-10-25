@@ -88,7 +88,7 @@
 <meta property="og:description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 （ˊ_&amp;gt;ˋ 原本就想写个简单的概述，但那样好像没什么意义，而且内容也实在是有点多…） 第一篇就先聊聊 OAuth 诞生的背景和其中的一些基本概念吧。  为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/oauth-roles.svg">
-<meta property="og:updated_time" content="2019-10-24T09:56:04.241Z">
+<meta property="og:updated_time" content="2019-10-25T07:24:07.655Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈 OAuth 2.0 (一) - 基本概念">
 <meta name="twitter:description" content="一年之前开过一个关于Web认证相关的坑，只简单地开了个头就不甚了了。时隔一年，正好这一年做的项目一直都跟应用间的认证和授权相关，于是决定重拾旧坑，好好研究一番。 （ˊ_&amp;gt;ˋ 原本就想写个简单的概述，但那样好像没什么意义，而且内容也实在是有点多…） 第一篇就先聊聊 OAuth 诞生的背景和其中的一些基本概念吧。  为什么会有 OAuth 2.0 的诞生在传统的客户端-服务器认证模型中，由客户端">
@@ -426,7 +426,7 @@
 <p>注册成功后，授权服务器会为客户端生成 <code>client_id</code>，如果是 confidential 的客户端，还会生成一组 <code>client credentials</code> 用于认证。Client credential 可以是 password，也可以是 public/private key，具体方式取决于授权服务器对安全性的要求。</p>
 <hr>
 <h3 id="客户端认证"><a href="#客户端认证" class="headerlink" title="客户端认证"></a>客户端认证</h3><p>OAuth 2.0 没有明确规定客户端的认证方式，这取决于应用的具体实现。<br>对于采用 password 认证的客户端，可以采用 HTTP Basic 认证的方式，也可以将其作为 POST 请求的 request body 传送给授权服务器。</p>
-<p>除此之外，<a href="https://openid.net/specs/openid-connect-core-1_0.html" target="_blank" rel="noopener">OpenID</a> 作为一个基于 OAuth 2.0 的认证协议，其中也定义了多种客户端认证的方式，由于本系列笔记的重点在授权，在这里就不作展开了。</p>
+<p>除此之外，<a href="https://openid.net/specs/openid-connect-core-1_0.html" target="_blank" rel="noopener">OpenID Connect</a> 作为一个基于 OAuth 2.0 的认证协议，其中也定义了多种客户端认证的方式，由于本系列笔记的重点在授权，在这里就不作展开了。</p>
 <hr>
 <p>好了，到目前为止，我们接收了很多概念，包括：</p>
 <ul>

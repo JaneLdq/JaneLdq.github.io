@@ -87,12 +87,15 @@
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="在上一篇笔记中，我们了解了一些 OAuth 2.0 中的概念，其中最重要的就是 OAuth 2.0 的四个角色：资源拥有者（用户）、客户端、授权服务器和资源服务器。在本篇笔记里，我们将介绍 OAuth 2.0 中的授权类型。 针对不同的授权场景，OAuth 2.0 定义了 4 种授权类型：  Authorization Code Implicit Resource Owner Password C">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/uploads/images/oauth2-code-grant.svg">
-<meta property="og:updated_time" content="2019-10-24T09:56:04.241Z">
+<meta property="og:image" content="http://yoursite.com/uploads/images/oauth2-code-grant.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/oauth2-implicit-grant.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/oauth2-resource-owner-credentials-grant.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/oauth2-client-credentials-grant.png">
+<meta property="og:updated_time" content="2019-10-25T07:24:07.655Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈 OAuth 2.0 (二) - 授权类型">
 <meta name="twitter:description" content="在上一篇笔记中，我们了解了一些 OAuth 2.0 中的概念，其中最重要的就是 OAuth 2.0 的四个角色：资源拥有者（用户）、客户端、授权服务器和资源服务器。在本篇笔记里，我们将介绍 OAuth 2.0 中的授权类型。 针对不同的授权场景，OAuth 2.0 定义了 4 种授权类型：  Authorization Code Implicit Resource Owner Password C">
-<meta name="twitter:image" content="http://yoursite.com/uploads/images/oauth2-code-grant.svg">
+<meta name="twitter:image" content="http://yoursite.com/uploads/images/oauth2-code-grant.png">
 
 
 
@@ -358,7 +361,7 @@
 <a id="more"></a>
 <hr>
 <h2 id="Authorization-Code"><a href="#Authorization-Code" class="headerlink" title="Authorization Code"></a>Authorization Code</h2><p>Authorization Code（授权码）这一授权类型基于重定向的过程，因此在整个授权过程中，有多个步骤要求 User Agent（通常指浏览器，这一组件在上图中没有体现）的参与。它既可以用来获取 Access Token，也可以用来获取 Refresh Token。</p>
-<p>先看图：<br><img src="/uploads/images/oauth2-code-grant.svg" alt="authorization code grant"></p>
+<p>先看图：<br><img src="/uploads/images/oauth2-code-grant.png" alt="Authorization Code Grant"></p>
 <ol>
 <li>客户端通过 User Agent 向授权服务器发起获取授权码的请求，在请求中会带上 <code>client_id</code>, <code>scope</code>, <code>state</code> 和一个在获取授权码后要跳转到的 <code>redirect_uri</code>（请记住这个URL，我们还会再见到它好几次）。</li>
 <li>授权服务器将 User Agent 重定向到用户认证页面，对用户进行认证，并授权给客户端，然后授权服务器将 User Agent 重定向到刚刚客户端在请求中指定的那个 <code>redirect_uri</code>，并附加上授权码和客户端在请求中带上的<code>state</code>。（用户也可以在这一步拒绝授权，那么在这一步将返回 Error Response）。</li>
@@ -369,7 +372,13 @@
 <p>在这一授权类型中，<strong>授权服务器充当了客户端和用户之间的媒介，在整个过程中，用户只与授权服务器交互完成认证，因此用户的认证信息不需要与客户端共享。</strong></p>
 <hr>
 <h2 id="Implicit"><a href="#Implicit" class="headerlink" title="Implicit"></a>Implicit</h2><p>一种为浏览器客户端应用简化的授权流程。注意，这里的浏览器客户端是指指类似与运行在浏览器中的 Javascript 应用，而非通过浏览器访问、实际部署在远程服务器上的应用。<br>在 Implicit 这类授权中，客户端使用脚本语言直接请求授权，跳过了“获取授权码”这个步骤，Access Token 将作为 <code>redirect_uri</code> 的一部分返回给客户端。</p>
-<p>Implicit 授权过程如图所示：<br>// TODO 画图好累哦，明天再来填坑</p>
+<p>Implicit 授权过程如图所示：<br><img src="/uploads/images/oauth2-implicit-grant.png" alt="Impilicit Grant"></p>
+<ol>
+<li>客户端向授权服务器发送授权请求。</li>
+<li>授权服务器重定向到用户认证界面，用户通过认证并同意授权。</li>
+<li>授权服务器将生成的 Access Token 放到客户端的 <code>redirect_uri</code> 的 fragment 中，并重定向到该 URL。</li>
+<li>客户端使用从重定向 URL 中获得的 Access Token 向资源服务器请求资源。</li>
+</ol>
 <p>Implicit 授权的过程比授权码类型简单，但简单的流程也暴露了更多的安全隐患：</p>
 <ul>
 <li>因为在 Implicit 授权中，Access Token 直接暴露在 URL 中，这意味着重定向到包含着 Access Token 的 URL 时，这个携带者 Access Token 的 URL 会被记录到浏览器的浏览历史中，相当于暴露给了浏览器。如果有心人企图利用浏览器历史获取 Access Token，那么就会对受保护的资源造成威胁。因此，一般授权服务器给同构 Implicit 方式获取的 Access Token 的设定的有效期都比较短。</li>
@@ -379,15 +388,40 @@
 <p>时至今日，在绝大多数服务器都支持 CORS，并且浏览器能自动在 HTTP 请求中添加 CORS 首部的情况下，我们要尽量避免使用 Implicit 授权类型。</p>
 <p>📹 <strong>相关视频</strong><br><a href="https://www.youtube.com/watch?v=CHzERullHe8" target="_blank" rel="noopener">What’s going on with the OAuth 2.0 Implicit flow?</a>（这个视频对 Implicit 授权的介绍还挺全面的，值得一看）</p>
 <hr>
-<h2 id="Resource-Owner-Password-Credentials"><a href="#Resource-Owner-Password-Credentials" class="headerlink" title="Resource Owner Password Credentials"></a>Resource Owner Password Credentials</h2><p>Resource Owner Password Credentials（用户密码认证），直接使用用户的用户名密码进行认证。这种方式只应该在高度信任的情况下使用，比如客户端是操作系统的一部分的情况，或者其他认证类型不可行的时候。</p>
+<h2 id="Resource-Owner-Password-Credentials"><a href="#Resource-Owner-Password-Credentials" class="headerlink" title="Resource Owner Password Credentials"></a>Resource Owner Password Credentials</h2><p>Resource Owner Password Credentials（用户密码认证）授权，即客户端直接使用用户的用户名密码进行认证获得 Access Token，这种方式要求客户端能够获取用户的用户名密码。</p>
+<p>这种授权类型只应该在高度信任客户端的情况下使用，比如当客户端是操作系统的一部分，或者其他认证类型不可行的时候。</p>
+<p>授权过程如图所示：<br><img src="/uploads/images/oauth2-resource-owner-credentials-grant.png" alt="Resource Owner Password Credentials Grant"></p>
+<ol>
+<li>用户向客户端提供用户名和密码。</li>
+<li>客户端利用用户的用户密码向授权服务器请求授权。</li>
+<li>授权服务器验证通过后返回 Access Token。</li>
+</ol>
 <p>即使这种情况用到了用户的用户密码，也应该只是在第一次请求时用于获取 Access Token 和 Refresh Token， 并将 Token 设定为长生命周期的 Token 以便于后续操作，这样可以避免在客户端保存用户密码。</p>
-<p>// TODO 图</p>
+<p>通常，这一类型是用来将使用直接认证的客户端（比如使用 HTTP Basic 或 Digest 认证）迁移到 OAuth 服务器，也就是说原来这些客户端要保存用户名密码，现在转为保存 Token。</p>
 <hr>
-<h3 id="Client-Credentials"><a href="#Client-Credentials" class="headerlink" title="Client Credentials"></a>Client Credentials</h3><p>这一类型中客户端以自己的名义，而不是以用户的名义向资源服务器请求资源，因此在获取 Access Token 时客户端直接采用自己的认证信息进行认证就可以了。这一模式从本质上来讲，客户端自身就是“资源拥有者”，因此并不存在是授权问题。</p>
-<p>// TODO 图<br>–&gt;</p>
+<h2 id="Client-Credentials"><a href="#Client-Credentials" class="headerlink" title="Client Credentials"></a>Client Credentials</h2><p>在这一类型中客户端以自己的名义，而不是以用户的名义向资源服务器请求资源，因此在获取 Access Token 时客户端直接采用自己的认证信息进行认证就可以了。这一模式从本质上来讲，客户端自身就是“资源拥有者”，因此并不存在是授权问题。</p>
+<p>授权过程如下图所示：<br><img src="/uploads/images/oauth2-client-credentials-grant.png" alt="Client Credentials Grant"></p>
+<ol>
+<li>客户端向授权服务器进行认证。在上一篇笔记中我们有提到 OAuth 没有规定要如何认证客户端，关于客户端的认证见另一个基于 OAuth 发展的协议 OpenID Connect。</li>
+<li>客户端认证通过后，授权服务器向客户端发送 Access Token。</li>
+</ol>
 <hr>
+<h2 id="协议端点（Endpoints）"><a href="#协议端点（Endpoints）" class="headerlink" title="协议端点（Endpoints）"></a>协议端点（Endpoints）</h2><p>通过分析以上四种授权过程，主要用到了如下端点（Endpoints）：</p>
+<p>两个授权服务器端点：</p>
+<ul>
+<li><strong>Authorization endpoin</strong> - 用于从用户那儿获取授权。</li>
+<li><strong>Token endpoint</strong> - 客户端使用此端点来获取 Access Token。所有拥有 credentials 的客户端在调用此端点时都要先经过授权服务器的认证。</li>
+</ul>
+<p>一个客户端端点：</p>
+<ul>
+<li><strong>Redirection endpoint</strong> - 获取用户的授权后，授权服务器通过此端点将授权返回给客户端。这个重定向端点一般在客户端注册时提供给授权服务器，也可以在发送授权请求时使用 <code>redirect_uri</code> 参数指明。</li>
+</ul>
+<hr>
+<p>到目前为止，关于 OAuth 2.0 基本的理论知识已经说了很多，虽然在那些 RFC 文档里还有很多细节和扩展内容，但作为「浅析」系列，我想我们还是先把这些抽象的概念转换为能跑起来的简单例子，实际感受一下 OAuth 2.0 中这几个角色的交互过程会比较有意思。</p>
+<p>So，我计划用 Spring Security OAuth 来实现一个 OAuth 2.0 授权场景。<br>下文见～</p>
 <p><strong>参考资料</strong></p>
 <ul>
+<li><a href="https://tools.ietf.org/html/rfc6749" target="_blank" rel="noopener">RFC6749 - The OAuth 2.0 Authorization Framework</a></li>
 <li><a href="https://developer.okta.com/blog/2019/05/01/is-the-oauth-implicit-flow-dead" target="_blank" rel="noopener">Is the OAuth 2.0 Implicit Flow Dead?</a></li>
 </ul>
 
@@ -596,7 +630,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Authorization-Code"><span class="nav-number">1.</span> <span class="nav-text">Authorization Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implicit"><span class="nav-number">2.</span> <span class="nav-text">Implicit</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么会有-Implicit-类型？"><span class="nav-number">2.1.</span> <span class="nav-text">为什么会有 Implicit 类型？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resource-Owner-Password-Credentials"><span class="nav-number">3.</span> <span class="nav-text">Resource Owner Password Credentials</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Client-Credentials"><span class="nav-number">3.1.</span> <span class="nav-text">Client Credentials</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Authorization-Code"><span class="nav-number">1.</span> <span class="nav-text">Authorization Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implicit"><span class="nav-number">2.</span> <span class="nav-text">Implicit</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么会有-Implicit-类型？"><span class="nav-number">2.1.</span> <span class="nav-text">为什么会有 Implicit 类型？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resource-Owner-Password-Credentials"><span class="nav-number">3.</span> <span class="nav-text">Resource Owner Password Credentials</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client-Credentials"><span class="nav-number">4.</span> <span class="nav-text">Client Credentials</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#协议端点（Endpoints）"><span class="nav-number">5.</span> <span class="nav-text">协议端点（Endpoints）</span></a></li></ol></div>
             
 
           </div>
