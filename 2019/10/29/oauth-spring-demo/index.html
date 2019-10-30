@@ -82,7 +82,7 @@
 <meta name="description" content="上两篇笔记把 OAuth 2.0 基本的理论知识都介绍了一下，在本篇笔记中，就让我们一起来用 Spring Security 实现一个简单的 OAuth 2.0 授权服务器吧。 Spring Security 是 Spring 全家桶中提供的与安全相关一套框架。它对一般 Web 应用都需要的认证和授权这一块的功能进行了封装，使得在一个 Spring 项目中可以非常简便又灵活地根据自身的安全性需求搭">
 <meta name="keywords" content="Authorization">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用 Spring Security OAuth 实现 OAuth 2.0 授权服务器（一）">
+<meta property="og:title" content="OAuth 2 实战（一）- 使用 Spring Security OAuth 实现授权服务器">
 <meta property="og:url" content="http://yoursite.com/2019/10/29/oauth-spring-demo/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="上两篇笔记把 OAuth 2.0 基本的理论知识都介绍了一下，在本篇笔记中，就让我们一起来用 Spring Security 实现一个简单的 OAuth 2.0 授权服务器吧。 Spring Security 是 Spring 全家桶中提供的与安全相关一套框架。它对一般 Web 应用都需要的认证和授权这一块的功能进行了封装，使得在一个 Spring 项目中可以非常简便又灵活地根据自身的安全性需求搭">
@@ -93,9 +93,9 @@
 <meta property="og:image" content="http://yoursite.com/uploads/images/oauth-code-grant-3.png">
 <meta property="og:image" content="http://yoursite.com/uploads/images/oauth-code-grant-4.png">
 <meta property="og:image" content="http://yoursite.com/uploads/images/oauth-code-grant-5.png">
-<meta property="og:updated_time" content="2019-10-29T16:18:19.295Z">
+<meta property="og:updated_time" content="2019-10-30T02:22:35.866Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用 Spring Security OAuth 实现 OAuth 2.0 授权服务器（一）">
+<meta name="twitter:title" content="OAuth 2 实战（一）- 使用 Spring Security OAuth 实现授权服务器">
 <meta name="twitter:description" content="上两篇笔记把 OAuth 2.0 基本的理论知识都介绍了一下，在本篇笔记中，就让我们一起来用 Spring Security 实现一个简单的 OAuth 2.0 授权服务器吧。 Spring Security 是 Spring 全家桶中提供的与安全相关一套框架。它对一般 Web 应用都需要的认证和授权这一块的功能进行了封装，使得在一个 Spring 项目中可以非常简便又灵活地根据自身的安全性需求搭">
 <meta name="twitter:image" content="http://yoursite.com/uploads/images/oauth-password-response.png">
 
@@ -133,7 +133,7 @@
 
 
 
-  <title>使用 Spring Security OAuth 实现 OAuth 2.0 授权服务器（一） | Jane</title>
+  <title>OAuth 2 实战（一）- 使用 Spring Security OAuth 实现授权服务器 | Jane</title>
   
 
 
@@ -277,7 +277,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">使用 Spring Security OAuth 实现 OAuth 2.0 授权服务器（一）</h1>
+          <h1 class="post-title" itemprop="name headline">OAuth 2 实战（一）- 使用 Spring Security OAuth 实现授权服务器</h1>
         
 
         <div class="post-meta">
@@ -391,11 +391,10 @@
 <p><img src="/uploads/images/oauth-code-grant-3.png" alt="Authorization Code Grant 3"></p>
 <p>我们使用预设的 alice 账号登录，成功后会跳转到默认提供的授权页面，如下图所示，由于我们在授权请求中提交了 2 个 scope，这里可以分别授权：</p>
 <p><img src="/uploads/images/oauth-code-grant-4.png" alt="Authorization Code Grant 4"></p>
-<p>用户同意部分授权，授权请求发送给服务器，服务器验证后生成授权码，并将其作为重定向 URL 参数传递给客户端：</p>
+<p>用户同意部分授权，授权请求发送给服务器，服务器验证后生成授权码，并将其作为重定向 URL 参数传递给客户端。可以看到，重定向 URL 为 <code>localhost:8081?code=OPfyhZ&amp;state=1234</code>，正是我们在注册客户端时为其配置的重定向 URL。</p>
 <p><img src="/uploads/images/oauth-code-grant-5.png" alt="Authorization Code Grant 5"></p>
-<p>可以看到，重定向 URL 为 <code>localhost:8081?code=OPfyhZ&amp;state=1234</code>，正是我们在注册客户端时为其配置的重定向 URL。</p>
-<p>之后的操作，就是客户端使用授权码向授权服务器请求 Access Token 的流程了，那么关于这一部分，还需要哪些实现或配置呢？</p>
-<p>今天已经很晚啦，我们下文见吧～</p>
+<p>之后客户端就可以使用授权码向授权服务器获取 Access Token。</p>
+<p>不过今天已经很晚啦，就把剩下的内容留到下一篇笔记吧～</p>
 <hr>
 <p>嗷，看来不能在出去玩耍之前结束这个系列了呢。（都是拖延症惹的祸 (；´Д`A)</p>
 <hr>
