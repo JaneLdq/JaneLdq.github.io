@@ -266,7 +266,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/29/oauth-spring-demo/" itemprop="url">OAuth 2 实战（一）- 使用 Spring Security OAuth 实现授权服务器</a></h1>
+                <a class="post-title-link" href="/2019/10/29/oauth-spring-demo/" itemprop="url">OAuth 2 实战（一）- 使用 Spring Security 实现资源服务器和授权服务器</a></h1>
         
 
         <div class="post-meta">
@@ -339,9 +339,9 @@
 
       
         
-          <p>上两篇笔记把 OAuth 2.0 基本的理论知识都介绍了一下，在本篇笔记中，就让我们一起来用 Spring Security 实现一个简单的 OAuth 2.0 授权服务器吧。</p>
-<p>Spring Security 是 Spring 全家桶中提供的与安全相关一套框架。它对一般 Web 应用都需要的认证和授权这一块的功能进行了封装，使得在一个 Spring 项目中可以非常简便又灵活地根据自身的安全性需求搭建出一套认证和授权流程。</p>
-<p>Spring Security OAuth 则是 Spring Security 提供的对 OAuth 的支持（ OAuth 1 和 OAuth 2 都支持）。具体的内容，就让我们边写边说吧～</p>
+          <p>上两篇笔记把 OAuth 2.0 基本的理论知识都介绍了一下，在本篇笔记中，就让我们一起来实现一个 OAuth 2.0  服务器吧，简单起见，这个服务器既承担<strong>资源服务器</strong>的角色，也承担<strong>授权服务器</strong>的角色。</p>
+<p>我们使用 Spring Security 作为底层支持。Spring Security 是 Spring 全家桶中提供的与安全相关一套框架。它对一般 Web 应用都需要的认证和授权这一块的功能进行了封装，使得在一个 Spring 项目中可以非常简便又灵活地根据自身的安全性需求搭建出一套认证和授权流程。</p>
+<p>Spring Security OAuth 则是 Spring Security 提供的对 OAuth 的支持（ OAuth 1 和 OAuth 2 都支持）。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/10/29/oauth-spring-demo/#more" rel="contents">
