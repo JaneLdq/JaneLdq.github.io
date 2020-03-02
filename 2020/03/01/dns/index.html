@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/uploads/images/dns-auth-server.png">
 <meta property="og:image" content="http://yoursite.com/uploads/images/dns-ip.png">
 <meta property="og:image" content="http://yoursite.com/uploads/images/dns-resolution.svg">
-<meta property="og:updated_time" content="2020-03-02T14:43:03.903Z">
+<meta property="og:updated_time" content="2020-03-02T14:47:08.156Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DNS 两三事">
 <meta name="twitter:description" content="喜迎 2020 第一篇笔记！突然觉得没有赶在四年一遇的 2 月 29 日写，有点遗憾呢。 最近这几个月摸了不少鱼，也挖了一点点坑，总想着把一个主题全部过一遍再回顾写笔记，结果就是永远都没有开始，因为不会的实在是太多了，怎么都学不完呀，所以，还是边看边整理吧～  当初在搭这个博客时，少不了要为域名配置 DNS，按着教程在 DNSPod 上注册了个账号，配了几条记录。至于为什么要做这些，倒真是一直没有">
@@ -356,9 +356,9 @@
 <h2 id="什么是-DNS"><a href="#什么是-DNS" class="headerlink" title="什么是 DNS"></a>什么是 DNS</h2><p>DNS (Domain Name System) 域名系统，本质上 DNS 定义了一种层次化的、基于域的命名方案，并采用一个分布式数据库系统加以实现。<br>其主要用途就是将<strong>主机名映射成 IP 地址</strong>。</p>
 <p>DNS主要由三大部分组成：</p>
 <ul>
-<li>The Domain Name Space and Resource Records - 域名空间和资源记录</li>
-<li>Name server - 域名服务器</li>
-<li>Resolver - 解析器</li>
+<li><strong>The Domain Name Space and Resource Records - 域名空间和资源记录</strong></li>
+<li><strong>Name server - 域名服务器</strong></li>
+<li><strong>Resolver - 解析器</strong></li>
 </ul>
 <hr>
 <h2 id="域名空间与资源记录"><a href="#域名空间与资源记录" class="headerlink" title="域名空间与资源记录"></a>域名空间与资源记录</h2><h3 id="域名空间"><a href="#域名空间" class="headerlink" title="域名空间"></a>域名空间</h3><p>DNS 域名空间可以表示为一棵树，从根节点开始，依次是顶级域名、二级域名、三级域名依次类推。树的叶子代表没有子域的域，一个叶节点域可能包含一个主机，也可能包含多个主机。</p>
@@ -456,26 +456,25 @@
 <li>所有的域名服务器都要实现非递归查询。</li>
 </ul>
 </li>
-<li><strong>递归查询</strong> - 主机发送查询请求给本地 DNS 服务器后，由本地 DNS 服务器代替该主机处理域名解析工作，直到返回它所需的结果，这个结果是<strong>完整结果</strong>（error or the answer）。这个机制被称为递归查询。<ul>
-<li>对于客户端来说，递归查询是最简单的模式，在这种模式下服务器扮演了解析器的角色返回最终结果给客户端，客户端不用管中间结果。</li>
-</ul>
-</li>
+<li><strong>递归查询</strong> - 主机发送查询请求给本地 DNS 服务器后，由本地 DNS 服务器代替该主机处理域名解析工作，直到返回它所需的结果，这个结果是<strong>完整结果</strong>（error or the answer）。这个机制被称为递归查询。</li>
 </ul>
 <hr>
-<h2 id="解析器"><a href="#解析器" class="headerlink" title="解析器"></a>解析器</h2><p>TODO</p>
-<!--
-### DNS缓存
-缓存是必要的，TTL是服务于缓存的。
-
-**Authoritative Record 权威记录** - 由管理该记录的权威部门提供，因此总是正确的。
-**Cached Record 缓存记录** - 有可能是过时的。
-
-### DNS基于UDP
-DNS采用UDP作为传输层协议，DNS消息通过UDP数据包发送，格式简单，只有查询和响应。
-为了应对服务器关闭或者丢包的情况，如果在很短的时间内没有响应返回，则DNS客户端必须重复查询请求；如果重复一定次数后仍然失败，则尝试域内另一台域名服务器。
-
-每个查询报文都包含16位标识符，这个标识符会被复制到响应中，以便域名服务器将响应与查询匹配。
--->
+<h2 id="解析器"><a href="#解析器" class="headerlink" title="解析器"></a>解析器</h2><p>到目前为止，我们提到域名解析都是以主机为单位，而实际上真正发起 DNS 查询的应该是运行在主机上的应用程序（比如Email, FTP, TELNET）。那么，应用程序究竟如何向域名服务器发起请求呢？这就需要依赖 DNS 的第三大组件 —— <strong>解析器 (Resolver)</strong>。<br>解析器一般以子程序 (Subroutine) 或系统调用 (System call) 的形式作为接口给应用程序调用，应用程序传参给解析器，解析器返回结果。</p>
+<p>举个例子，Linux 中的 <code>getaddrinfo</code> 就是这样一个可用来解析域名的库函数。下面这段代码经过编译运行将得到 <code>google.com</code> 的 IP 地址。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">addrinfo</span>* <span class="title">addr</span>;</span></span><br><span class="line">  <span class="keyword">int</span> result = getaddrinfo(<span class="string">"google.com"</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, &amp;addr);</span><br><span class="line">  <span class="keyword">if</span> (result != <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="built_in">stderr</span>, <span class="string">"getaddrinfo: %s\n"</span>, gai_strerror(result));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span>* <span class="title">internet_addr</span> = (<span class="title">struct</span> <span class="title">sockaddr_in</span>*) <span class="title">addr</span>-&gt;<span class="title">ai_addr</span>;</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"google.com is at: %s\n"</span>, inet_ntoa(internet_addr-&gt;sin_addr));</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>更多关于 <code>getaddrinfo</code> 可见 <a href="http://man7.org/linux/man-pages/man3/getaddrinfo.3.html" target="_blank" rel="noopener">Linux Programmer’s Manual - GETADDRINFO(3)</a>。</p>
+<p>解析器包含三个主要功能：</p>
+<ul>
+<li>将主机名映射为主机地址（域名解析）</li>
+<li>将主机地址映射为主机名（反向解析）</li>
+<li>常规查询（从 DNS 查询任意信息）</li>
+</ul>
+<p>当解析器完成某个请求后，会将收到的结果缓存起来，这样下一次收到同样的请求时，可以直接从本地缓存返回结果，以提高响应速度。当本地缓存中没有结果或者缓存失效时，解析器才会向外部 DNS 服务器发起请求。</p>
+<p>我们在上一节提到的本地 DNS 服务器（127.0.0.1）实际上就是一个本地 DNS 解析器，基本上所有的操作系统都有提供 DNS 解析服务。<br>在本机不具备提供 DNS 解析服务（或者本地 DNS 解析不理想，速度慢）的情况下，我们也可以使用远程 DNS 解析器，现在也有一些公开的免费的 DNS 解析服务，比如 Google 的 <code>8.8.8.8</code> 和 <code>8.8.4.4</code> 还有 <a href="https://blog.cloudflare.com/dns-resolver-1-1-1-1/" target="_blank" rel="noopener">Cloudflare</a> 的 <code>1.1.1.1</code>（Cloudflare 这篇 blog 里还提到了一个好可爱的网站 - <a href="https://howdns.works/，以漫画形式介绍 DNS，生动明了" target="_blank" rel="noopener">How DNS Works</a>。</p>
+<h3 id="DNS缓存"><a href="#DNS缓存" class="headerlink" title="DNS缓存"></a>DNS缓存</h3><p>缓存是必要的，TTL是服务于缓存的。</p>
+<p><strong>Authoritative Record 权威记录</strong> - 由管理该记录的权威部门提供，因此总是正确的。<br><strong>Cached Record 缓存记录</strong> - 有可能是过时的。</p>
+<p>当缓存记录遇上权威记录，毫无疑问，弃缓存而选权威。</p>
+<h3 id="DNS基于UDP"><a href="#DNS基于UDP" class="headerlink" title="DNS基于UDP"></a>DNS基于UDP</h3><p>DNS采用UDP作为传输层协议，DNS消息通过UDP数据包发送，格式简单，只有查询和响应。<br>为了应对服务器关闭或者丢包的情况，如果在很短的时间内没有响应返回，则DNS客户端必须重复查询请求；如果重复一定次数后仍然失败，则尝试域内另一台域名服务器。</p>
+<p>每个查询报文都包含16位标识符，这个标识符会被复制到响应中，以便域名服务器将响应与查询匹配。<br>–&gt;</p>
 <hr>
 <p><strong>参考资料</strong></p>
 <ul>
@@ -484,6 +483,7 @@ DNS采用UDP作为传输层协议，DNS消息通过UDP数据包发送，格式�
 <li><a href="https://securitytrails.com/blog/dns-root-servers" target="_blank" rel="noopener">DNS Root Servers - What are they and Are They Really Only 13?</a></li>
 <li><a href="https://tools.ietf.org/html/rfc1034" target="_blank" rel="noopener">RFC 1034 - DOMAIN NAMES - CONCEPTS AND FACILITIES</a></li>
 <li><a href="https://tools.ietf.org/html/rfc1035" target="_blank" rel="noopener">RFC 1035 - DOMAIN NAMES - IMPLEMENTATION AND SPECIFICATION</a></li>
+<li><a href="https://jameshfisher.com/2018/02/03/what-does-getaddrinfo-do/" target="_blank" rel="noopener">What does getaddrinfo do</a></li>
 </ul>
 
       
@@ -685,7 +685,7 @@ DNS采用UDP作为传输层协议，DNS消息通过UDP数据包发送，格式�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要-DNS"><span class="nav-number">1.</span> <span class="nav-text">为什么需要 DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-DNS"><span class="nav-number">2.</span> <span class="nav-text">什么是 DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名空间与资源记录"><span class="nav-number">3.</span> <span class="nav-text">域名空间与资源记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域名空间"><span class="nav-number">3.1.</span> <span class="nav-text">域名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#域名资源记录"><span class="nav-number">3.2.</span> <span class="nav-text">域名资源记录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常见资源记录类型"><span class="nav-number">3.2.1.</span> <span class="nav-text">常见资源记录类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名服务器"><span class="nav-number">4.</span> <span class="nav-text">域名服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域名解析"><span class="nav-number">4.1.</span> <span class="nav-text">域名解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询机制"><span class="nav-number">4.2.</span> <span class="nav-text">查询机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析器"><span class="nav-number">5.</span> <span class="nav-text">解析器</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要-DNS"><span class="nav-number">1.</span> <span class="nav-text">为什么需要 DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-DNS"><span class="nav-number">2.</span> <span class="nav-text">什么是 DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名空间与资源记录"><span class="nav-number">3.</span> <span class="nav-text">域名空间与资源记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域名空间"><span class="nav-number">3.1.</span> <span class="nav-text">域名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#域名资源记录"><span class="nav-number">3.2.</span> <span class="nav-text">域名资源记录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常见资源记录类型"><span class="nav-number">3.2.1.</span> <span class="nav-text">常见资源记录类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名服务器"><span class="nav-number">4.</span> <span class="nav-text">域名服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域名解析"><span class="nav-number">4.1.</span> <span class="nav-text">域名解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询机制"><span class="nav-number">4.2.</span> <span class="nav-text">查询机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析器"><span class="nav-number">5.</span> <span class="nav-text">解析器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS缓存"><span class="nav-number">5.1.</span> <span class="nav-text">DNS缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS基于UDP"><span class="nav-number">5.2.</span> <span class="nav-text">DNS基于UDP</span></a></li></ol></li></ol></div>
             
 
           </div>
