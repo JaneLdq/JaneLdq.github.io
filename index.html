@@ -247,6 +247,154 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/reliable-data-transfer-principles-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jane Liao">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jane">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/15/reliable-data-transfer-principles-2/" itemprop="url">可靠的数据传输实现指南（二）- 管道化</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-15T09:31:40+08:00">
+                2020-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>在上篇笔记中我们综合了诸多技术搭建了一个可靠的数据传输协议——位交替协议。然而，作为停等协议，位交替协议的效率实在太低。</p>
+<p>举个例子，假设主机 A 和主机 B 之间的往返时延为 <code>30 ms</code>，二者之间连接的信道的传输率 <code>R</code> 为 <code>1 Gbps</code>，一个 packet 的大小 <code>L</code> 为 <code>1000 bytes</code>，那么一个 packet 从主机传输到信道上所花的时间为<br>$$d_{trans}=\frac{L}{R}=\frac {1000 \times 8 \: bit}{1 \times 10^{9}\,  bps}=8 \times 10^{-6}s$$<br>然而，当 A 给 B 发送了一个packet之后，要等上 <code>30ms + 0.008ms = 30.008 ms</code> 才收到 ACK，然后 A 才能发送下一个 packet。发送方的实际利用率为：<br>$$U_{sender}=\frac{\frac{L}{R}}{RTT +\frac{L}{R}}=\frac{0.008\, ms}{30\, ms + 0.008\, ms}\approx 0.00027=0.027\%$$<br>也就是说在 <code>30.008ms</code> 里实际上只传输了 <code>1000</code> 个字节，实际吞吐量为 <code>276kbps</code>，大大的浪费啊~</p>
+<p>这个性能问题的解决思路很简单：<strong>允许在之前发送地 packet 没有收到确认的情况下继续发送新的 packet</strong>。就像是水流源源不断地流经管道，因此这种模式又被称为<strong>管道化 (Pipeling)</strong>。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/03/15/reliable-data-transfer-principles-2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </p></div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/14/reliable-data-transfer-principles/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -339,7 +487,7 @@
 
       
         
-          <p>写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，会也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本更新更快，内容更与时俱进。</p>
+          <p>写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本更新更快，内容更与时俱进。</p>
 <hr>
 <p>在人们离不开网络的当今，我们通过网络交流、购物、协同工作，为了使这些活动能通过网络顺利地进行，我们需要解决网络传输的两大基本问题：</p>
 <ul>
@@ -1609,159 +1757,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/31/gc-copying/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jane Liao">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jane">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/31/gc-copying/" itemprop="url">GC算法笔记（三）复制算法</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-31T19:50:57+08:00">
-                2019-07-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">技术笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>复制 (Copying GC) 算法最早由 Marvin Lee Minsky 于1963年在 <em>A LISP Garbage Collector Algorithm Using Serial Secondary Storage</em> 中提出。</p>
-<p>复制算法的基本思想很简单，就是把整个堆空间一分为二，每次只使用一半的空间用于分配：</p>
-<ul>
-<li>正在使用的空间叫做 <strong>From</strong> 空间，空置的另一半称为 <strong>To</strong> 空间；</li>
-<li>执行 GC 时，将 From 空间的<strong>活动对象</strong>都复制到 To 空间，然后对整个 From 空间进行回收；</li>
-<li>复制完成后，将 From 空间和 To 空间交换，即原来的 From 空间变成了 To 空间，原来的 To 空间变成了 From 空间，直到下一次 GC，两个空间再次交换。</li>
-</ul>
-<p>复制算法的一大特点就是它关注的是<strong>活动对象</strong>，而不像之前提到的<strong>标记-清除算法</strong>及<strong>引用计数法</strong>，都是遍历查找非活动对象。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/07/31/gc-copying/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1814,7 +1809,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

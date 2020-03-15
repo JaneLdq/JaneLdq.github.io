@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，会也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版">
+<meta name="description" content="写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本">
 <meta name="keywords" content="网络">
 <meta property="og:type" content="article">
 <meta property="og:title" content="可靠的数据传输实现指南（一）">
 <meta property="og:url" content="http://yoursite.com/2020/03/14/reliable-data-transfer-principles/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，会也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版">
+<meta property="og:description" content="写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/rdt-1.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/rdt-2.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/rdt-2-1-sender.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/rdt-2-1-receiver.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/rdt-3-sender.svg">
-<meta property="og:updated_time" content="2020-03-14T13:44:05.665Z">
+<meta property="og:updated_time" content="2020-03-15T08:39:13.477Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="可靠的数据传输实现指南（一）">
-<meta name="twitter:description" content="写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，会也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版">
+<meta name="twitter:description" content="写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本">
 <meta name="twitter:image" content="http://yoursite.com/uploads/images/rdt-1.svg">
 
 
@@ -348,7 +348,7 @@
       
 
       
-        <p>写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，会也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本更新更快，内容更与时俱进。</p>
+        <p>写在前面：从上一篇开始，大概会有一系列网络相关的笔记，主要内容整理自《计算机网络：自顶向下方法》这本书，目前在看的是英文版，个人感觉比中文版看起来流畅。原本打算以《计算机网络（第五版）》为主要参考书的，这本与前者相反，是以自底向上的结构组织的，比较下来发现自己更适应前者的思维模式。在整理笔记的时候考虑到一些术语的翻译，也会参考后者，同时查漏补缺。目前看来两本书的涵盖点都挺全面的，相比之下，前者版本更新更快，内容更与时俱进。</p>
 <hr>
 <p>在人们离不开网络的当今，我们通过网络交流、购物、协同工作，为了使这些活动能通过网络顺利地进行，我们需要解决网络传输的两大基本问题：</p>
 <ul>
@@ -481,6 +481,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2020/03/15/reliable-data-transfer-principles-2/" rel="prev" title="可靠的数据传输实现指南（二）- 管道化">
+                可靠的数据传输实现指南（二）- 管道化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -558,7 +562,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
