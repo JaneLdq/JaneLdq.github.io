@@ -247,6 +247,160 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/16/congestion-control-principles/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jane Liao">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jane">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/16/congestion-control-principles/" itemprop="url">网络拥塞控制指北（一）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-16T18:58:29+08:00">
+                2020-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>我们之前提到网络传输的两大基本问题，一个是「如何提供可靠的数据传输」，这个问题我们在前面的笔记中已经给出了指南，本文将解答第二个问题「如何避免网络拥塞以及在拥塞发生时如何恢复」。</p>
+<p>什么是网络拥塞？<strong>当网络中存在太多的流量导致数据包被延迟或丢失，从而降低了网络性能</strong>，这种情况就被称之为网络拥塞。</p>
+<p>病名：<strong>网络拥塞</strong><br>早期症状：消化不良 —— 过度延迟、<strong>丢包</strong><br>晚期后果：瘫痪 —— <strong>拥塞崩溃 (congestion collapse)</strong>，因负载过重超出了网络承受能力，导致网络性能骤降<br>病因：被投喂过多 —— <strong>发送方发送速率太快，导致路由器缓冲区溢出</strong><br>不良影响：</p>
+<ul>
+<li>导致发送方重传很多不必要的数据包（还在传输途中的但因为过度延迟被判断为丢包/已经被接收但是ACK丢失的那些数据包），进一步加重拥塞，陷入恶性循环；</li>
+<li>当一个数据包传到一半时被丢弃了，则在这之前消耗的资源都被浪费了</li>
+</ul>
+<p>知道了症状，也知道了病因，才好积极预防、对症下药嘛~</p>
+<p>网络拥塞的治疗方案由网络层和传输层协作实施，网络层作为直接经历拥塞的部分，需要它最终决定如何处理过载的数据；而传输层作为“幕后黑手”，要控制拥塞还需其积极配合，减少传输层注入网络的负载了。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/03/16/congestion-control-principles/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </p></div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/reliable-data-transfer-principles-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1605,158 +1759,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/06/gc-mark-compact/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jane Liao">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jane">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/06/gc-mark-compact/" itemprop="url">GC算法笔记（四）标记-整理算法</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-06T19:32:20+08:00">
-                2019-08-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">技术笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>前面我们提到 GC 算法的基本类型无非<strong>标记-清除</strong>、<strong>引用计数</strong>和<strong>复制</strong>算法三类，那么这篇笔记中介绍的<strong>标记-整理 (Mark-Compact)</strong> 算法就开始将 <strong>标记-清除</strong> 算法与<strong>复制</strong>算法结合的产物。不同于复制算法是从一个空间往另一个空间复制，标记-整理算法是在整个堆上<strong>原地整理</strong>，因此也提高了堆的利用率。</p>
-<p>标记-整理算法的思路也很简单，分为两个阶段：</p>
-<ul>
-<li><strong>标记阶段</strong> - 与标记-清除算法中的标记阶段一样，遍历堆上的对象，标记出活动对象。</li>
-<li><strong>整理阶段</strong> - 移动或复制活动对象，将所有存活的对象都移动到堆的一端（仿佛被压缩），然后直接清理掉端边界以外的内容。</li>
-</ul>
-<p>值得注意的一点是，整理的顺序会影响到程序的局部性。重排堆中对象时所遵循的顺序包括如下三种：<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/08/06/gc-mark-compact/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </p></div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1809,7 +1811,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-count">66</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1831,7 +1833,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
