@@ -82,15 +82,15 @@
 <meta name="description" content="我们之前提到网络传输的两大基本问题，一个是「如何提供可靠的数据传输」，这个问题我们在前面的笔记中已经给出了指南，本文将解答第二个问题「如何避免网络拥塞以及在拥塞发生时如何恢复」。 什么是网络拥塞？当网络中存在太多的流量导致数据包被延迟或丢失，从而降低了网络性能，这种情况就被称之为网络拥塞。 病名：网络拥塞早期症状：消化不良 —— 过度延迟、丢包晚期后果：瘫痪 —— 拥塞崩溃 (congestion">
 <meta name="keywords" content="拥塞控制">
 <meta property="og:type" content="article">
-<meta property="og:title" content="网络拥塞控制指北之网络层篇">
+<meta property="og:title" content="网络拥塞控制指北（一）- 网络层篇">
 <meta property="og:url" content="http://yoursite.com/2020/03/16/congestion-control-1/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="我们之前提到网络传输的两大基本问题，一个是「如何提供可靠的数据传输」，这个问题我们在前面的笔记中已经给出了指南，本文将解答第二个问题「如何避免网络拥塞以及在拥塞发生时如何恢复」。 什么是网络拥塞？当网络中存在太多的流量导致数据包被延迟或丢失，从而降低了网络性能，这种情况就被称之为网络拥塞。 病名：网络拥塞早期症状：消化不良 —— 过度延迟、丢包晚期后果：瘫痪 —— 拥塞崩溃 (congestion">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/uploads/images/congestion-control-network-layer.svg">
-<meta property="og:updated_time" content="2020-03-23T14:54:54.851Z">
+<meta property="og:updated_time" content="2020-03-29T08:43:27.663Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="网络拥塞控制指北之网络层篇">
+<meta name="twitter:title" content="网络拥塞控制指北（一）- 网络层篇">
 <meta name="twitter:description" content="我们之前提到网络传输的两大基本问题，一个是「如何提供可靠的数据传输」，这个问题我们在前面的笔记中已经给出了指南，本文将解答第二个问题「如何避免网络拥塞以及在拥塞发生时如何恢复」。 什么是网络拥塞？当网络中存在太多的流量导致数据包被延迟或丢失，从而降低了网络性能，这种情况就被称之为网络拥塞。 病名：网络拥塞早期症状：消化不良 —— 过度延迟、丢包晚期后果：瘫痪 —— 拥塞崩溃 (congestion">
 <meta name="twitter:image" content="http://yoursite.com/uploads/images/congestion-control-network-layer.svg">
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>网络拥塞控制指北之网络层篇 | Jane</title>
+  <title>网络拥塞控制指北（一）- 网络层篇 | Jane</title>
   
 
 
@@ -272,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">网络拥塞控制指北之网络层篇</h1>
+          <h1 class="post-title" itemprop="name headline">网络拥塞控制指北（一）- 网络层篇</h1>
         
 
         <div class="post-meta">
@@ -391,13 +391,13 @@
 <h4 id="逐跳后压"><a href="#逐跳后压" class="headerlink" title="逐跳后压"></a>逐跳后压</h4><p>当网络速度很快或者距离很远时，由于传输延迟，拥塞信号发出后到它产生作用期间又产生了很多新流量。有一种改进方法是让抑制信号在每一跳都发挥作用。这种方式可以很快缓解拥塞点的拥塞现象，不过代价是其上游路径需要消耗更多的缓冲区空间。<br>这种方法可以将拥塞消灭在萌芽状态。</p>
 <hr>
 <h2 id="减载-Load-shedding"><a href="#减载-Load-shedding" class="headerlink" title="减载 Load shedding"></a>减载 Load shedding</h2><p>当以上方法都没有办法消除拥塞时，就只能用最直接粗暴的方案了：当路由器来不及处理数据包时，就直接丢弃。<br>问题在于：丢弃哪些数据包呢？</p>
-<p>一种最简单的方式就是<strong>尾丢弃 (drop-tail)</strong>，顾名思义，队尾新来的放不下的分组会被丢弃。</p>
-<p>然而，在某些情况下，这并不是一种好的丢弃策略。考虑到应用程序的类型，不同时刻到达的分组其重要性并不是一样的。<br>举几个例子：</p>
+<p>一种最简单的方式就是<strong>尾丢弃 (drop-tail)</strong>，顾名思义，队尾新来的放不下的数据包会被丢弃。</p>
+<p>然而，在某些情况下，这并不是一种好的丢弃策略。考虑到应用程序的类型，不同时刻到达的数据包其重要性并不是一样的。<br>举几个例子：</p>
 <ul>
 <li>对于文件传输 - 旧数据包比新数据包重要，如果丢弃数据包6，而保存7-9，则会迫使接收方缓存这些暂时不能使用的数据</li>
 <li>对于实时流媒体 - 新的数据包要比旧的重要</li>
 </ul>
-<p>因此，在选择丢弃分组的时候考虑应用程序的类型是一种相对更好的方式。如果要实现更智能的丢包策略，则还需要应用程序的参与，比如要求它们为每个分组标记其重要性，路由器根据这个值来决定丢弃哪些分组。</p>
+<p>因此，在选择丢弃数据包的时候考虑应用程序的类型是一种相对更好的方式。如果要实现更智能的丢包策略，则还需要应用程序的参与，比如要求它们为每个数据包标记其重要性，路由器根据这个值来决定丢弃哪些数据包。</p>
 <p>一般来说，在拥塞苗头刚刚出现时及时扼杀比等它发生之后再处理更有效。因此，在路由器缓冲区用尽之前提前丢包或者标记以给发送方发出拥塞的信号不失为一种有用的预防机制。</p>
 <p>事实上，已经有很多主动性的丢包/标记策略被提出，统称为<strong>主动队列管理 (Active Queue Management, AQM) 算法</strong>。下文提到的<strong>随机早期检测 (RED)</strong> 是其中应用最广泛的算法之一。</p>
 <hr>
@@ -452,8 +452,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/22/congetstion-control-2/" rel="prev" title="网络拥塞控制指北之传输层篇">
-                网络拥塞控制指北之传输层篇 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/22/congetstion-control-2/" rel="prev" title="网络拥塞控制指北（二）- 传输层篇">
+                网络拥塞控制指北（二）- 传输层篇 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
