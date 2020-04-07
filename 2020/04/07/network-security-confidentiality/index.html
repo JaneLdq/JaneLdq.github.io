@@ -68,6 +68,7 @@
 
 
 
+  <meta name="keywords" content="网络安全,">
 
 
 
@@ -77,13 +78,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jane">
-<meta property="og:url" content="http://yoursite.com/tags/Quicksort/index.html">
+
+<meta name="description" content="网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。 现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2">
+<meta name="keywords" content="网络安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈网络安全（一）- 保密性与加密机制">
+<meta property="og:url" content="http://yoursite.com/2020/04/07/network-security-confidentiality/index.html">
 <meta property="og:site_name" content="Jane">
+<meta property="og:description" content="网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。 现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-04-07T07:08:09.140Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jane">
+<meta name="twitter:title" content="浅谈网络安全（一）- 保密性与加密机制">
+<meta name="twitter:description" content="网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。 现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2">
 
 
 
@@ -113,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/Quicksort/">
+  <link rel="canonical" href="http://yoursite.com/2020/04/07/network-security-confidentiality/">
 
 
 
 
 
-  <title>标签: Quicksort | Jane</title>
+  <title>浅谈网络安全（一）- 保密性与加密机制 | Jane</title>
   
 
 
@@ -138,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -232,52 +239,186 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Quicksort<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/07/network-security-confidentiality/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jane Liao">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jane">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/08/21/quicksort/" itemprop="url">
-              
-                <span itemprop="name">快速排序避坑指南</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">浅谈网络安全（一）- 保密性与加密机制</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-08-21T10:21:21+08:00" content="2018-08-21">
-          08-21
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-07T02:48:44+00:00">
+                2020-04-07
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    </div>
+      
 
+      
+        <p>网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。</p>
+<p>现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2）消息都是完好的，没有被篡改过的；3）我们还得确认网线对面确实是我们的同事，而不是假冒的。如果做不到这些，那我们的工作内容很容易就会泄漏出去，如果是十分重要的内容，必定会对公司造成巨大损失。简单归纳以上几点，我们可以得出安全的网络通信得具备如下几个特性：</p>
+<ul>
+<li><strong>保密性 (Confidentiality)</strong> - 需要某种机制对通信内容加密</li>
+<li><strong>报文完整性 (Message integrity)</strong> - 能够检测出消息是否完整，是否在传输中被恶意篡改或伪造</li>
+<li><strong>身份认证 (End-point Authentication)</strong> - 通信的双方能互相验证身份</li>
+</ul>
+<p>在网络安全中，密码学扮演了至关重要的角色。通过加密，我们很自然地就获得了通信的保密性。<br><a id="more"></a><br>一个加密系统可表示为一个五元组：</p>
+<ul>
+<li><strong>明文</strong> (plaintext) - 加密前的原始消息</li>
+<li><strong>密文</strong> (ciphertext)- 经过加密之后得到的结果</li>
+<li><strong>加密算法</strong> (encryption algorithm) - 将明文转为密文的运算</li>
+<li><strong>解密算法</strong> (decryption algorithm) - 将密文还原为明文的运算</li>
+<li><strong>密钥</strong> (key) - 一串数字或字母，在进行加密/解密计算时作为参数输入。同一个明文在相同的密码算法和不同的密钥计算下会产生不同的密文。密钥的长度通常决定了密文的安全性。</li>
+</ul>
+<p>根据密钥的类型，有两种加密机制：<strong>对称加密</strong>和<strong>非对称加密</strong>。</p>
+<hr>
+<h1 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h1><hr>
+<h1 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h1>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络安全/" rel="tag"># 网络安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/22/congetstion-control-2/" rel="next" title="网络拥塞控制指北（二）- 传输层篇">
+                <i class="fa fa-chevron-left"></i> 网络拥塞控制指北（二）- 传输层篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -285,6 +426,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -305,8 +450,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -323,7 +477,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-count">68</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -345,7 +499,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -402,6 +556,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#对称加密"><span class="nav-number">1.</span> <span class="nav-text">对称加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#非对称加密"><span class="nav-number">2.</span> <span class="nav-text">非对称加密</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -535,6 +705,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
