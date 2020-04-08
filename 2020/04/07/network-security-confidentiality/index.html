@@ -82,15 +82,17 @@
 <meta name="description" content="网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。 现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2">
 <meta name="keywords" content="网络安全">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈网络安全（一）- 保密性与加密机制">
+<meta property="og:title" content="浅谈网络安全（一）- 保密性与加密算法">
 <meta property="og:url" content="http://yoursite.com/2020/04/07/network-security-confidentiality/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。 现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-04-07T07:08:09.140Z">
+<meta property="og:image" content="http://yoursite.com/uploads/images/letter_freq.svg">
+<meta property="og:updated_time" content="2020-04-08T14:45:44.689Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈网络安全（一）- 保密性与加密机制">
+<meta name="twitter:title" content="浅谈网络安全（一）- 保密性与加密算法">
 <meta name="twitter:description" content="网络安全这个话题实在太庞大了，小到单个资源的访问控制、通信内容的防窃听与防篡改，大到对组织整体网络 DDoS 攻击的防控，都属于网络安全的范畴。如果要对这些具体的操作详细说明，那么每个都可以单独拿出来写出长篇大论，而作为一篇入门向笔记，我们还是从最简单的场景开始吧。 现在疫情这么严重，大家很多都是在家办公，每天只能通过网络交流工作，我们自然希望 1）通信内容是保密的，不会在传输过程中被他人窃取；2">
+<meta name="twitter:image" content="http://yoursite.com/uploads/images/letter_freq.svg">
 
 
 
@@ -126,7 +128,7 @@
 
 
 
-  <title>浅谈网络安全（一）- 保密性与加密机制 | Jane</title>
+  <title>浅谈网络安全（一）- 保密性与加密算法 | Jane</title>
   
 
 
@@ -270,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">浅谈网络安全（一）- 保密性与加密机制</h1>
+          <h1 class="post-title" itemprop="name headline">浅谈网络安全（一）- 保密性与加密算法</h1>
         
 
         <div class="post-meta">
@@ -349,18 +351,50 @@
 <li><strong>报文完整性 (Message integrity)</strong> - 能够检测出消息是否完整，是否在传输中被恶意篡改或伪造</li>
 <li><strong>身份认证 (End-point Authentication)</strong> - 通信的双方能互相验证身份</li>
 </ul>
-<p>在网络安全中，密码学扮演了至关重要的角色。通过加密，我们很自然地就获得了通信的保密性。<br><a id="more"></a><br>一个加密系统可表示为一个五元组：</p>
-<ul>
-<li><strong>明文</strong> (plaintext) - 加密前的原始消息</li>
-<li><strong>密文</strong> (ciphertext)- 经过加密之后得到的结果</li>
-<li><strong>加密算法</strong> (encryption algorithm) - 将明文转为密文的运算</li>
-<li><strong>解密算法</strong> (decryption algorithm) - 将密文还原为明文的运算</li>
-<li><strong>密钥</strong> (key) - 一串数字或字母，在进行加密/解密计算时作为参数输入。同一个明文在相同的密码算法和不同的密钥计算下会产生不同的密文。密钥的长度通常决定了密文的安全性。</li>
-</ul>
-<p>根据密钥的类型，有两种加密机制：<strong>对称加密</strong>和<strong>非对称加密</strong>。</p>
+<p>在网络安全中，密码学扮演了至关重要的角色。通过加密，我们很自然地就获得了通信的保密性。</p>
+<a id="more"></a>
 <hr>
-<h1 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h1><hr>
-<h1 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h1>
+<h1 id="密码学基础知识"><a href="#密码学基础知识" class="headerlink" title="密码学基础知识"></a>密码学基础知识</h1><p>首先，我们简单了解一下几点基础的密码学知识吧。</p>
+<p>通常，我们可以将一个加密系统表示为一个五元组：</p>
+<ul>
+<li><strong>明文</strong> (<strong>P</strong>laintext) - 加密前的原始消息</li>
+<li><strong>密文</strong> (<strong>C</strong>iphertext, C)- 经过加密之后得到的结果</li>
+<li><strong>加密算法</strong> (<strong>E</strong>ncryption algorithm) - 将明文转为密文的运算</li>
+<li><strong>解密算法</strong> (<strong>D</strong>ecryption algorithm) - 将密文还原为明文的运算</li>
+<li><strong>密钥</strong> (<strong>K</strong>ey) - 一串数字或字母，在进行加密/解密计算时作为参数输入。同一个明文在相同的密码算法和不同的密钥计算下会产生不同的密文。密钥的长度通常决定了密文的安全性。</li>
+</ul>
+<p>以五元组 <code>(P, C, E, D, K)</code> 可以将加密解密的过程表示为如下公式, 其中 E<sub>K</sub> 表示以密钥 K 进行加密，D<sub>K</sub> 表示以密钥 K 进行解密：$$C=E_{K}(P), \, D_{K}(C)=P$$</p>
+<hr>
+<h2 id="三类密码分析场景"><a href="#三类密码分析场景" class="headerlink" title="三类密码分析场景"></a>三类密码分析场景</h2><ul>
+<li><strong>Ciphertext Only</strong> - 分析者只有密文，没有对应的明文</li>
+<li><strong>Known Plaintext</strong> - 分析者有部分相匹配的密文和明文（已知部分明文与密文的映射关系）</li>
+<li><strong>Chose Plaintext</strong> - 分析者能够加密某些他/她自己选择的明文（已知部分明文的加密过程）</li>
+</ul>
+<hr>
+<h2 id="两类传统密码学加密方式"><a href="#两类传统密码学加密方式" class="headerlink" title="两类传统密码学加密方式"></a>两类传统密码学加密方式</h2><h3 id="置换密码"><a href="#置换密码" class="headerlink" title="置换密码"></a>置换密码</h3><p>置换密码(sustitution cipher)，将明文中<strong>每个字母或者每组字母替换为另一个字母或另一组字母</strong>。</p>
+<p>最古老也是最经典的例子即<strong>凯撒密码 (Caesar cipher)</strong> - 每个字母按字母序移动 3 个位置。</p>
+<ul>
+<li>凯撒密码一般化：按照字母序移动 k 个位置，<strong>26</strong> 种可能性</li>
+<li>凯撒密码改进版：让每个字母映射为另一个字母，<strong>26!</strong> 种可能性</li>
+</ul>
+<p>像这种一一对应的置换策略被成为<strong>单字母置换</strong>。针对这种加密方式的基本攻击手段是<strong>利用自然语言的统计特性，计算所有字母在密文中的出现频率，与自然语言中字母的出现频率相比较，逐个试探映射关系</strong>。除此之外，综合常见的两字母组合、三字母组合，比如 <code>th</code>, <code>er</code>, <code>the</code>, <code>and</code> 等。<br>下图为26个字母的频率分布（图来自 <a href="https://en.wikipedia.org/wiki/Letter_frequency" target="_blank" rel="noopener">Letter Frequency - Wikipedia</a>），可以看到 <code>e</code> 为最常见的字母，<code>t</code> 次之。根据这些特性，在分析一段密文时，我们可以猜测出现频率最高的字母置换的就是 <code>e</code>，次之为 <code>t</code>。接下来，若看到常见的 <code>tXe</code> 组合，那么可以合理推测 <code>X</code> 置换的是 <code>h</code>。通过一系列的猜测，可以逐渐试探出明文。<br><img src="/uploads/images/letter_freq.svg" alt="Letter frequency"></p>
+<h3 id="移位密码"><a href="#移位密码" class="headerlink" title="移位密码"></a>移位密码</h3><p>移位密码 (transposition cipher)，<strong>将明文中的字母重新排列，本身不变，只是位置变了</strong>。<br>一种常见的移位密码方案为<strong>列换位</strong>。列换位使用一个不包含重复字母的单词或短语作为密钥，假设密钥长度为 L, 明文长度为 N，则将明文以每行长度为 L 进行排列，得到 N 列字符串。密文则按密钥字母最小的那列开始按列输出。<br>举个例子，假设我们以 <code>HIWORLD</code> 作为密钥来加密 <code>phpisthebestlanguageintheworld</code> 这段明文：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">H I W O R L D</span><br><span class="line">2 3 7 5 6 4 1</span><br><span class="line">-------------</span><br><span class="line">p h p i s t h</span><br><span class="line">e b e s t l a </span><br><span class="line">n g u a g e i </span><br><span class="line">n t h e w o r </span><br><span class="line">l d</span><br></pre></td></tr></table></figure></p>
+<p>如上所示，按字母序 <code>D H I L O R W</code> 逐个输出每一列得到密文 <code>hairpennlhbgtdtleoisaestgwpeuh</code>。<br>在移位密码中，每个字母都代表自己，因此通过分析密文中的字母出现的频率分布就可以判断加密方式是否为移位加密。至于移位密码的破解，我也没有详细研究，就不多提了。</p>
+<hr>
+<h2 id="两个基本密码学原则"><a href="#两个基本密码学原则" class="headerlink" title="两个基本密码学原则"></a>两个基本密码学原则</h2><ol>
+<li><strong>消息必须包含一定的冗余度</strong>，用来阻止侵入者发送随机垃圾信息诱骗接收方解密消息并将其解释为有效内容造成破坏。</li>
+<li><strong>需要采取某种方法对抗重放攻击</strong>。</li>
+</ol>
+<hr>
+<p>在密码学中有个 Kerckhoff’s principle — <strong>所有的算法必须是公开的，而密钥是保密的</strong>。现代密码学的目标即是使加密算法尽可能的复杂，使分析者即使拿到了大量选择密文，若没有密钥，也不能推测出明文。</p>
+<p>根据密钥的类型，我们可以将现代加密算法分为两大类：<strong>对称密钥加密</strong>和<strong>非对称（公开）密钥加密</strong>，我们将在下文依次介绍。</p>
+<p>// TODO 写了这么多居然还没有进入正题…</p>
+<!--
+# 对称密钥加密
+
+# 非对称密钥加密
+-->
+
       
     </div>
     
@@ -566,7 +600,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#对称加密"><span class="nav-number">1.</span> <span class="nav-text">对称加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#非对称加密"><span class="nav-number">2.</span> <span class="nav-text">非对称加密</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#密码学基础知识"><span class="nav-number">1.</span> <span class="nav-text">密码学基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#三类密码分析场景"><span class="nav-number">1.1.</span> <span class="nav-text">三类密码分析场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两类传统密码学加密方式"><span class="nav-number">1.2.</span> <span class="nav-text">两类传统密码学加密方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#置换密码"><span class="nav-number">1.2.1.</span> <span class="nav-text">置换密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#移位密码"><span class="nav-number">1.2.2.</span> <span class="nav-text">移位密码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两个基本密码学原则"><span class="nav-number">1.3.</span> <span class="nav-text">两个基本密码学原则</span></a></li></ol></li></ol></div>
             
 
           </div>
