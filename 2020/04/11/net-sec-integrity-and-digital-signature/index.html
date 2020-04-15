@@ -82,15 +82,17 @@
 <meta name="description" content="在上一篇笔记中，我们提到安全的网络通信有三点基本特性：保密性、报文完整性和身份认证。这篇笔记我们就来聊聊报文完整性和身份认证，二者是息息相关的。还是用 Alice 和 Bob 来举例，当 Bob 收到一条来自 Alice 的消息，他需要验证如下内容：  这条消息在传输过程中没有被篡改 - 验证报文完整性 这条消息确实是 Alice 发的 - 进行身份认证">
 <meta name="keywords" content="网络安全">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈网络安全（二）- 报文完整性与身份认证">
+<meta property="og:title" content="浅谈网络安全（二）- 报文完整性与数字签名">
 <meta property="og:url" content="http://yoursite.com/2020/04/11/net-sec-integrity-and-digital-signature/index.html">
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="在上一篇笔记中，我们提到安全的网络通信有三点基本特性：保密性、报文完整性和身份认证。这篇笔记我们就来聊聊报文完整性和身份认证，二者是息息相关的。还是用 Alice 和 Bob 来举例，当 Bob 收到一条来自 Alice 的消息，他需要验证如下内容：  这条消息在传输过程中没有被篡改 - 验证报文完整性 这条消息确实是 Alice 发的 - 进行身份认证">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-04-13T14:45:02.600Z">
+<meta property="og:image" content="http://yoursite.com/uploads/images/digital-signature.png">
+<meta property="og:updated_time" content="2020-04-15T15:12:31.471Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈网络安全（二）- 报文完整性与身份认证">
+<meta name="twitter:title" content="浅谈网络安全（二）- 报文完整性与数字签名">
 <meta name="twitter:description" content="在上一篇笔记中，我们提到安全的网络通信有三点基本特性：保密性、报文完整性和身份认证。这篇笔记我们就来聊聊报文完整性和身份认证，二者是息息相关的。还是用 Alice 和 Bob 来举例，当 Bob 收到一条来自 Alice 的消息，他需要验证如下内容：  这条消息在传输过程中没有被篡改 - 验证报文完整性 这条消息确实是 Alice 发的 - 进行身份认证">
+<meta name="twitter:image" content="http://yoursite.com/uploads/images/digital-signature.png">
 
 
 
@@ -126,7 +128,7 @@
 
 
 
-  <title>浅谈网络安全（二）- 报文完整性与身份认证 | Jane</title>
+  <title>浅谈网络安全（二）- 报文完整性与数字签名 | Jane</title>
   
 
 
@@ -270,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">浅谈网络安全（二）- 报文完整性与身份认证</h1>
+          <h1 class="post-title" itemprop="name headline">浅谈网络安全（二）- 报文完整性与数字签名</h1>
         
 
         <div class="post-meta">
@@ -349,8 +351,8 @@
 </ul>
 <a id="more"></a>
 <hr>
-<h1 id="报文完整性"><a href="#报文完整性" class="headerlink" title="报文完整性"></a>报文完整性</h1><p>在报文完整性校验的实现中，我们会用到<strong>加密哈希函数</strong>。</p>
-<h2 id="加密哈希函数"><a href="#加密哈希函数" class="headerlink" title="加密哈希函数"></a>加密哈希函数</h2><p>一般哈希函数具有如下特性：</p>
+<h1 id="加密哈希函数"><a href="#加密哈希函数" class="headerlink" title="加密哈希函数"></a>加密哈希函数</h1><p>在报文完整性校验的实现中，我们会用到<strong>加密哈希函数</strong>。</p>
+<p>一般哈希函数具有如下特性：</p>
 <ol>
 <li>接受任意长度的输入</li>
 <li>产生固定长度的输出</li>
@@ -363,7 +365,7 @@
 <p>常用的加密哈希算法有：<a href="https://en.wikipedia.org/wiki/MD5" target="_blank" rel="noopener">MD5</a>(虽然现在有了彩虹表可以破解很多常见密文，但是目前应用还是挺广泛的), <a href="https://en.wikipedia.org/wiki/SHA-1" target="_blank" rel="noopener">SHA-1</a>, <a href="https://en.wikipedia.org/wiki/SHA-2" target="_blank" rel="noopener">SHA-2</a>, <a href="https://en.wikipedia.org/wiki/Whirlpool_(hash_function%29" target="_blank" rel="noopener">Whirlpool</a> 等。</p>
 <p>举个例子，下面这段 js 代码对字符串 <code>hello, world</code> 采用了 md5 加密，控制台将输出对应的哈希值 <code>e4d7f1b4ed2e42d15898f4b27b019da4</code>：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">'crypto'</span>)</span><br><span class="line"><span class="keyword">let</span> hash = crypto.createHash(<span class="string">'md5'</span>).update(<span class="string">"hello, world"</span>).digest(<span class="string">"hex"</span>)</span><br><span class="line"><span class="built_in">console</span>.log(hash)</span><br></pre></td></tr></table></figure></p>
 <hr>
-<h2 id="MAC-Message-Authentication-Code"><a href="#MAC-Message-Authentication-Code" class="headerlink" title="MAC - Message Authentication Code"></a>MAC - Message Authentication Code</h2><p>别激动，此 MAC 非苹果家的 mac，而是 <strong>Message Authentication Code</strong> 的缩写，翻译有好多种，我也不知道叫哪个比较合适，这里就直接简称 MAC 了。<br>那 MAC 到底是什么呢？它又如何保证报文完整性呢？<br>首先，我们假设 Alice 和 Bob 共享一个只有二人知道的小秘密 (shared secret)，用 <code>s</code> 表示，当 Alice 和 Bob 通信时：</p>
+<h1 id="MAC-Message-Authentication-Code"><a href="#MAC-Message-Authentication-Code" class="headerlink" title="MAC - Message Authentication Code"></a>MAC - Message Authentication Code</h1><p>别激动，此 MAC 非苹果家的 mac，而是 <strong>Message Authentication Code</strong> 的缩写，翻译有好多种，我也不知道叫哪个比较合适，这里就直接简称 MAC 了。<br>那 MAC 到底是什么呢？它又如何保证报文完整性呢？<br>首先，我们假设 Alice 和 Bob 共享一个只有二人知道的小秘密 (shared secret)，用 <code>s</code> 表示，当 Alice 和 Bob 通信时：</p>
 <ol>
 <li>Alice 想给 Bob 发送消息 <code>m</code>，于是她把 <code>m</code> 和 <code>s</code> 拼起来得到 <code>m+s</code>，然后使用哈希算法得到哈希值 <code>H(m+s)</code>，这个 <code>H(m+s)</code> 就是 <strong>Message Authentication Code (MAC)</strong></li>
 <li>然后 Alice 把 (<code>m</code>, <code>H(m+s)</code>) 一起发给 Bob</li>
@@ -377,12 +379,44 @@
 <p>上述描述的 MAC 的基本思想是基于哈希算法，这也是如今最主流的一种 MAC 标准，详细信息见  <strong>HMAC(Hash-based MAC)</strong>](<a href="https://en.wikipedia.org/wiki/HMAC)。" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/HMAC)。</a></p>
 <p><strong>使用基于哈希的 MAC 校验报文完整性不需要加密算法，这非常适合用于一些对保密性没有要求的场景</strong>。比如在网络层使用链路状态路由算法同步路由信息时，就不要求保密性，毕竟所有消息本身就是同步到所有路由器上的。</p>
 <p>除此之外，还有采用分组加密算法实现的 MAC，比如<a href="https://en.wikipedia.org/wiki/One-key_MAC" target="_blank" rel="noopener"><strong>OMAC</strong></a>, <a href="https://en.wikipedia.org/wiki/CBC-MAC" target="_blank" rel="noopener"><strong>CBC-MAC</strong></a>, <a href="https://en.wikipedia.org/wiki/PMAC_(cryptography%29" target="_blank" rel="noopener"><strong>PMAC</strong></a>等，更多 MAC 相关的信息见 <a href="https://en.wikipedia.org/wiki/Message_authentication_code" target="_blank" rel="noopener">MAC - wiki</a>。</p>
-<!--
-# 数字签名
--->
+<hr>
+<h1 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h1><p>在现实世界中，很多文件的真实性或有效性的依据都是由某个授权者的手写签名来决定，数字签名则是一种在网络中保障文件真实性的手段。与手写签名一样，数字签名要<strong>可验证</strong>，且具有<strong>不可否认性</strong>。</p>
+<p>一条经过数字签名的消息具备如下属性：</p>
+<ul>
+<li>接收方<strong>可以验证签名者的身份</strong></li>
+<li>消息内容<strong>不可被篡改或伪造</strong></li>
+</ul>
+<p>如何实现数字签名呢？<br>MAC 行不行？不行。MAC 中通信双方共享一个 secret，这意味当 Alice 使用它对某个文件进行签名后，获得这个签名文件的第三方并不能确定这个文件就是 Alice 签名的，因为 Bob 拥有同样的 secret。</p>
+<p>最常见的实现是采用非对称密钥加密技术。你会发现公钥私钥机制很天然地满足了身份验证、不可否认性和不可伪造这几大要求。下面我们就来看看如何使用非对称密钥加密实现数字签名吧。</p>
+<p>假设 Alice 现在需要对某个文件 <code>m</code> 进行签名，那么她可以使用她的<strong>私钥</strong>对文件进行加密，加密后的密文即为经过数字签名的文件。为什么说这份密文满足了数字签名的要求：</p>
+<ul>
+<li>只有使用 Alice 的私钥才能生成这份密文，而 Alice 的私钥理论上只有 Alice 自己拥有，因此可以验证签名者的身份和消息的完整性</li>
+<li>如果文件被修改为 <code>m&#39;</code>，那么再次使用 Alice 的私钥对其签名将得到不同的签名文件，因此 Alice 也没法对曾经签过名的文件抵赖（不可否认性）</li>
+</ul>
+<h2 id="消息摘要"><a href="#消息摘要" class="headerlink" title="消息摘要"></a>消息摘要</h2><p>由于上述数字签名方式是对整个文件进行私钥加密，这种做法有其局限性：</p>
+<ul>
+<li>针对整个文件进行加密，将保密性与认证耦合在一起了，但是很多时候保密性并不是必须的</li>
+<li>非对称加密计算量复杂，非常消耗计算资源</li>
+</ul>
+<p>针对不需要保密的场景，我们可以使用前面提到的加密哈希函数对文件生成<strong>消息摘要</strong>，然后对消息摘要进行签名，并将其与原文件一起发送。</p>
+<p>采用消息摘要数字签名的过程图示如下：<br><img src="/uploads/images/digital-signature.png" alt="Digital singature"></p>
+<hr>
+<h2 id="MAC-vs-数字签名"><a href="#MAC-vs-数字签名" class="headerlink" title="MAC vs. 数字签名"></a>MAC vs. 数字签名</h2><p>首先，MAC 中只用到了哈希函数，既没有使用对称加密也没有使用非对称加密；而在数字签名中，我们先使用哈希函数得到消息摘要，然后利用了非对称加密对摘要进行签名。相比之下，MAC 是比数字签名更“轻量级”的技术，由于数字签名用到了非对称加密技术，通常需要公钥基础设施（PKI）的支持。<br>其次，这两者使用的场景其实不太一样。MAC 应用于提供两个通信的对象之间消息的完整性，对于接收方而言，它要验证的身份是与之通信的发送方是否是其声称的那个。而在使用数字签名的场景中，身份验证是对于消息所属者的认证，而不是通信方。<br>举个例子，一份所属于 Alice 的签名文件可能存放在第三方服务器上，当 Bob 向第三方服务器请求这份文件时，他可以基于 MAC 来验证文件确实响应自第三方服务器（要求 Bob 与第三方服务器共享一个 secret），然后 Bob 可以通过数字签名验证文件是否真实属于 Alice。</p>
+<hr>
+<p>在上面的例子中，我们忽略了一个非常重要的问题：Bob 怎么能保证他手上的 Alice 的公钥就是 Alice 的呢？<br>考虑如下场景，如果在 Bob 和 Alice 之前还有一个第三者 X，在三者之间发生了如下操作：</p>
+<ol>
+<li>X 以某种方式将 Bob 手上的 Alice 的公钥替换成了自己的</li>
+<li>Bob 向 Alice 请求文件</li>
+<li>X 截获了这个请求，并使用自己的私钥对一份伪造文件进行了签名，然后将这个伪造文件连同 X 的签名被发给 Bob</li>
+<li>Bob用他手上的 “Alice” 的公钥（实际上已经是 X 的公钥）对签名解密，并将结果与对收到的伪造文件计算的摘要进行比对，一切正常</li>
+</ol>
+<p>在这个场景中，Bob 收到了一份 X 伪造的文件，并且认为该文件是 Alice 签名的，而事实上 Alice 对此一无所知。</p>
+<p>那么，如何才能保证公钥的真实性呢？网络上的通信双方如何安全的交换彼此的公钥？<br>我们下文见～</p>
 <hr>
 <p><strong>参考资料</strong></p>
 <ul>
+<li>计算机网络，第五版</li>
+<li>Computer Networking: A Top-Down Approach, 7th Edition</li>
 <li><a href="https://en.wikipedia.org/wiki/Message_authentication_code" target="_blank" rel="noopener">MAC - wiki</a></li>
 </ul>
 
@@ -591,7 +625,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#报文完整性"><span class="nav-number">1.</span> <span class="nav-text">报文完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#加密哈希函数"><span class="nav-number">1.1.</span> <span class="nav-text">加密哈希函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAC-Message-Authentication-Code"><span class="nav-number">1.2.</span> <span class="nav-text">MAC - Message Authentication Code</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#加密哈希函数"><span class="nav-number">1.</span> <span class="nav-text">加密哈希函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MAC-Message-Authentication-Code"><span class="nav-number">2.</span> <span class="nav-text">MAC - Message Authentication Code</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数字签名"><span class="nav-number">3.</span> <span class="nav-text">数字签名</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息摘要"><span class="nav-number">3.1.</span> <span class="nav-text">消息摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAC-vs-数字签名"><span class="nav-number">3.2.</span> <span class="nav-text">MAC vs. 数字签名</span></a></li></ol></li></ol></div>
             
 
           </div>
