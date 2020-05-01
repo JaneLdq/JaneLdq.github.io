@@ -87,12 +87,13 @@
 <meta property="og:site_name" content="Jane">
 <meta property="og:description" content="我们都知道 HTTP 协议本身是不提供任何安全保障的，HTTP 的报文只是普通的文本，在传输中报文的内容是完全公开的。在没有安全机制的保障下，基于 HTTP 的通信很容易受到诸如窃听、man-in-the-middle 这类攻击。HTTPS (Hypertext Transport Protocol Secure) 作为 HTTP 的扩展，由RFC 2818 正式定义，也被称为 HTTP over">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/uploads/images/http-tls-tcp.svg">
 <meta property="og:image" content="http://yoursite.com/uploads/images/tls-2-handshake.svg">
-<meta property="og:updated_time" content="2020-04-30T14:59:21.639Z">
+<meta property="og:updated_time" content="2020-05-01T02:39:41.353Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HTTPS 究竟是如何保障安全通信的？">
 <meta name="twitter:description" content="我们都知道 HTTP 协议本身是不提供任何安全保障的，HTTP 的报文只是普通的文本，在传输中报文的内容是完全公开的。在没有安全机制的保障下，基于 HTTP 的通信很容易受到诸如窃听、man-in-the-middle 这类攻击。HTTPS (Hypertext Transport Protocol Secure) 作为 HTTP 的扩展，由RFC 2818 正式定义，也被称为 HTTP over">
-<meta name="twitter:image" content="http://yoursite.com/uploads/images/tls-2-handshake.svg">
+<meta name="twitter:image" content="http://yoursite.com/uploads/images/http-tls-tcp.svg">
 
 
 
@@ -350,7 +351,7 @@
 <hr>
 <h1 id="HTTP-TLS-与-TCP"><a href="#HTTP-TLS-与-TCP" class="headerlink" title="HTTP, TLS 与 TCP"></a>HTTP, TLS 与 TCP</h1><p>TLS (Transport Layer Security) 实现在 TCP 协议之上，也常被看作是 TCP 协议的增强 (enhancement)，为应用层协议提供安全服务。TLS 的前身是 SSL (Secure Sockets Layer)，所以有很多文章提到 HTTPS 的 “S” 也指 SSL。TLS 实际上就是 SSL 的新版本。</p>
 <p>当我们使用 HTTP 协议时，HTTP 请求在 TCP 连接上传输，而是用 HTTPS 协议时，HTTP 请求在 TLS 连接上传输，TLS 连接建立在 TCP 连接之上。三者的关系如下图所示：</p>
-<p>// TODO</p>
+<p><img src="/uploads/images/http-tls-tcp.svg" alt="HTTP &amp; TLS &amp; RCP"></p>
 <p>当 TCP 连接建立之后，TLS 将通过一系列认证、协商流程建立起 TLS 连接。当发送方的 HTTP 请求传给 TLS 后，TLS 对 HTTP 请求加密并传递给下层的 TCP 连接，接收方的 TLS 将 TCP 连接传上来的数据解密得到原始的 HTTP 请求交给上层的 HTTP 处理。<br>在这个过程中，TLS 连接的建立意味着通信的双方通过了身份认证，而传输的内容则由 TLS 提供的一系列加密验证机制保证了数据的保密性和完整性。</p>
 <p>具体的实现待下文一一道来。</p>
 <hr>
@@ -388,14 +389,25 @@
 </li>
 <li><code>CertificateVerify</code>，可选项。？</li>
 <li><code>ChangeCipherSpec</code>，客户端通过发送这条消息告知服务器客户端这边已经准备好使用之前协商好的加密套件加密数据并传输了，与此同时，客户端会将上述协商好的 <code>Cipher Spec</code> 从 <strong>pending</strong> Cipher Spec 拷贝到 <strong>current</strong> Cipher Spec 做好准备。</li>
-<li><code>Finished</code>，紧随 <code>ChangeCipherSpec</code> 之后的 <code>Finished</code> 消息是第一条使用协商的加密套件保护的消息，用于确认。</li>
+<li><code>Finished</code>，紧随 <code>ChangeCipherSpec</code> 之后的 <code>Finished</code> 消息是第一条使用协商的加密套件保护的消息.</li>
 </ul>
 </li>
-<li>服务器收到客户端的 <code>Finished</code> 消息后，也会准备好使用新的加密套件，并发送一条服务端的 <code>ChangeCipherSpec</code> 的消息给客户端，并使用新的加密套件发送服务端的 <code>Finished</code> 消息。</li>
-<li>握手过程完成，客户端与服务器之间使用协商好的加密套件开始传输应用层数据。</li>
+<li>服务器收到客户端的 <code>ChangeCipherSpec</code> 消息后，也会准备好使用协商好的加密套件，并发送一条服务端的 <code>ChangeCipherSpec</code> 的消息给客户端，并使用新的加密套件发送服务端的 <code>Finished</code> 消息。当服务器收到客户端的 <code>Finished</code> 消息后，使用对称密钥解密消息，验证 MAC。</li>
+<li>客户端收到服务器的 <code>Finished</code> 消息后，也要使用对称密钥解密消息，验证 MAC，如果一切顺利，则握手完成，可以开始发送应用数据。</li>
 </ol>
+<p>握手完成后，后续通信的安全性实际上依赖于 premaster secret 的安全性。通过分析上述握手过程，我们可以看到用于生成 master secret 的三个随机数：客户端随机数、服务器随机数和 premaster secret 中虽然前两个存在被窃听的可能，但 premaster secret 是通信双方完成身份验证（建立信任）后加密传输的，理论上这个随机数是不可能被窃听的。因此，只要 premaster secret 不被破解，master secret 便是安全的，整个通信也是安全的。</p>
 <hr>
 <h2 id="Change-Cipher-Spec-协议"><a href="#Change-Cipher-Spec-协议" class="headerlink" title="Change Cipher Spec 协议"></a>Change Cipher Spec 协议</h2><p>上面提到的 <code>ChangeCipherSpec</code> 消息实际上是由一个独立的 Change Cipher Spec 协议定义的，它的数据包中只有一个字节的数据，其值为 1。它的作用就是用于告知对方自己已经切换到之前协商好的加密套件（Cipher Suite）的状态，准备使用之前协商好的加密套件加密数据并传输了。</p>
+<hr>
+<p>了解了 TLS 握手的大致流程，不难发现，其中应用了大部分我们在《浅谈网络安全》笔记中聊到的很多技术，因此开头我便说，TLS 中包含了诸多“熟面孔”：</p>
+<ul>
+<li>服务器与客户端的身份认证利用<strong>数字证书</strong>实现</li>
+<li>共享密钥的采用<strong>非对称密钥加密</strong></li>
+<li>应用数据的传输采用<strong>对称密钥加密</strong></li>
+<li>数据的完整性采用 <strong>MAC</strong> 验证</li>
+</ul>
+<p>通过综合使用以上技术，TLS 为上层应用协议提供具备数据<strong>保密性</strong>、<strong>完整性</strong>和<strong>身份认证</strong>的安全通信服务。</p>
+<hr>
 
       
     </div>
