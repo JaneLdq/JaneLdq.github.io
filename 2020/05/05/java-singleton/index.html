@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,单例模式,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="虽然单例模式很好理解，在具体实现的时候，还是有很多细节需要注意。几年前，我写过一篇在 Javascript 中实现单例模式的笔记，但其实在不同语言中实现单例模式还是有不少的区别，尤其像 Java、C++ 这类多线程语言。 在本文中，我们一起来看看在 Java 中实现单例模式都有哪些方式，要考虑哪些问题。">
+<meta name="keywords" content="Java,单例模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 Java 中实现单例模式">
+<meta property="og:url" content="http://yoursite.com/2020/05/05/java-singleton/index.html">
+<meta property="og:site_name" content="Jane">
+<meta property="og:description" content="虽然单例模式很好理解，在具体实现的时候，还是有很多细节需要注意。几年前，我写过一篇在 Javascript 中实现单例模式的笔记，但其实在不同语言中实现单例模式还是有不少的区别，尤其像 Java、C++ 这类多线程语言。 在本文中，我们一起来看看在 Java 中实现单例模式都有哪些方式，要考虑哪些问题。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-05T16:00:10.792Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在 Java 中实现单例模式">
+<meta name="twitter:description" content="虽然单例模式很好理解，在具体实现的时候，还是有很多细节需要注意。几年前，我写过一篇在 Javascript 中实现单例模式的笔记，但其实在不同语言中实现单例模式还是有不少的区别，尤其像 Java、C++ 这类多线程语言。 在本文中，我们一起来看看在 Java 中实现单例模式都有哪些方式，要考虑哪些问题。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/05/java-singleton/">
+
+
+
+
+
+  <title>在 Java 中实现单例模式 | Jane</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jane</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn & Live</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/05/java-singleton/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jane Liao">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jane">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">在 Java 中实现单例模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-05T08:05:45+00:00">
+                2020-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>虽然单例模式很好理解，在具体实现的时候，还是有很多细节需要注意。几年前，我写过一篇在 Javascript 中实现单例模式的笔记，但其实在不同语言中实现单例模式还是有不少的区别，尤其像 Java、C++ 这类多线程语言。</p>
+<p>在本文中，我们一起来看看在 Java 中实现单例模式都有哪些方式，要考虑哪些问题。<br><a id="more"></a></p>
+<hr>
+<h1 id="单线程中的单例模式"><a href="#单线程中的单例模式" class="headerlink" title="单线程中的单例模式"></a>单线程中的单例模式</h1><p>一说到单例模式，大家的第一反应可能都是：那还不简单，看我一下给你写好几个版本出来：</p>
+<ul>
+<li><p><strong>公共静态类变量</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EagerHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> EagerHelper INSTANCE = <span class="keyword">new</span> EagerHelper();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">EagerHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>私有静态类变量 + 工厂方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EagerFactoryHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> EagerFactoryHelper INSTANCE = <span class="keyword">new</span> EagerFactoryHelper();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">EagerFactoryHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> EagerFactoryHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>工厂方法 + Lazy Initialization</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LazyFactoryHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> LazyFactoryHelper INSTANCE = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">LazyFactoryHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazyFactoryHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="keyword">null</span>) &#123;</span><br><span class="line">            INSTANCE = <span class="keyword">new</span> LazyFactoryHelper();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>乍一看，上面这三种都实现了单例模式：</p>
+<ul>
+<li>使用类变量共享唯一实例</li>
+<li>私有构造函数防止外部创建实例</li>
+<li>还用到了 Lazy Initialzation 降低在加载类时的开销，将初始化推迟到第一次访问实例时</li>
+</ul>
+<p>然而，上面的实现都只能在单线程环境中使用，一旦涉及了多线程，就会出问题了。如果有多个线程同时访问，就可能出现初始化多个实例，或者某个线程获得尚未完成初始化的实例，导致程序运行出错。</p>
+<p>那么，如何实现线程安全的单例呢？</p>
+<hr>
+<h1 id="多线程中的单例模式"><a href="#多线程中的单例模式" class="headerlink" title="多线程中的单例模式"></a>多线程中的单例模式</h1><p>提到多线程，一定离不开锁机制。提到 Java 中的多线程，一定离不开 <code>synchronized</code>、<code>volatile</code> 等关键字。</p>
+<h2 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h2><p>一般来说，使用 <code>synchronized</code> 关键字修饰方法是最容易想到的实现方式：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SyncHelper INSTANCE = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">SyncHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> SyncHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="keyword">null</span>) &#123;</span><br><span class="line">            INSTANCE = <span class="keyword">new</span> SyncHelper();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然而，这样实现导致每次请求实例都要执行加锁、释放锁的操作，这会对性能造成不小的影响。而事实上，只有最初请求实例的几个线程可能会遇到竞争的情况，当唯一的实例创建完成后，后续请求实例的线程本可以直接获得实例，这时还要先申请锁实在是没必要。<br>为了减少不必要的加锁操作，可以采用 <strong>双重检查锁定</strong> 模式。</p>
+<hr>
+<h2 id="Double-checked-Locking-Idiom"><a href="#Double-checked-Locking-Idiom" class="headerlink" title="Double-checked Locking Idiom"></a>Double-checked Locking Idiom</h2><p><strong>Double-checked Locking</strong>, 即<strong>双重检查锁定</strong>，按照如下逻辑实现加锁机制：</p>
+<ol>
+<li>检查实例是否已创建，如果是，则直接返回已有实例</li>
+<li>否则，请求锁</li>
+<li>再次检查实例是否已创建，如果之前拿到锁的线程已经创建好实例，那么直接返回已有实例</li>
+<li>否则，创建并返回实例</li>
+</ol>
+<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoubleCheckedHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> DoubleCheckedHelper INSTANCE = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">DoubleCheckedHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DoubleCheckedHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (DoubleCheckedHelper.class) &#123;</span><br><span class="line">                <span class="keyword">if</span> (INSTANCE == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    INSTANCE = <span class="keyword">new</span> DoubleCheckedHelper();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面这段代码真的没有问题吗？我们要意识到实例的初始化并不是一瞬间完成的事情，考虑如下情况：<br>当线程 A 正在初始化实例但尚未完成，这时 <code>INSTANCE</code> 已经指向了一块分配好的内存。此时线程 B 调用 <code>getInstance</code> 方法，<code>INSTANCE == null</code> 这句判断的值为 false，这个尚未完成初始化的“半成品”实例会被返回给线程 B，导致线程 B 运行出错。</p>
+<p>因此，上面这个版本的双重检查锁定模式是有问题的。如何修正呢？很简单，引入 <code>volatile</code> 关键字。这里用到了 <code>volatile</code> 提供的 <strong>happens-before</strong> 保证。（不熟悉 <code>volatile</code>？，请移步各大搜索引擎～）<br>修正后的版本如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoubleCheckedHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> DoubleCheckedHelper INSTANCE = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">DoubleCheckedHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DoubleCheckedHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        DoubleCheckedHelper localRef = INSTANCE;</span><br><span class="line">        <span class="keyword">if</span> (localRef == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (DoubleCheckedHelper.class) &#123;</span><br><span class="line">                localRef = INSTANCE;</span><br><span class="line">                <span class="keyword">if</span> (localRef == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    localRef = INSTANCE = <span class="keyword">new</span> DoubleCheckedHelper();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> localRef;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面这段代码中，我们除了引入了 <code>volatile</code> 修饰实例变量之外，还在 <code>getInstance</code> 方法中引入了一个局部变量，这么做是为了降低访问 <code>volatile</code> 变量带来的性能开销。</p>
+<hr>
+<h2 id="Initialization-on-demand-holder-Idiom"><a href="#Initialization-on-demand-holder-Idiom" class="headerlink" title="Initialization-on-demand holder Idiom"></a>Initialization-on-demand holder Idiom</h2><p>修正过的双重检查锁定机制虽然是线程安全的，但这段代码看起来实在是不怎么优美。那么，有没有更简洁优美的方式呢？<br>尽善尽美的程序员们开发除了 <strong>Initialization-on-demand holder</strong> 模式，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InitOnDemandHelper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">InitOnDemandHelper</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LazyHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> InitOnDemandHelper INSTANCE = <span class="keyword">new</span> InitOnDemandHelper();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> InitOnDemandHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LazyHolder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>Initialization-on-demand holder</strong> 模式利用了 JVM 的类初始化机制：类</p>
+<ul>
+<li>当类加载器加载 <code>Helper</code> 类时，由于它没有定义任何静态类变量，<code>Helper</code> 类的初始化基本上啥事儿也不用干，<strong>节省了类初始化的开销</strong>；</li>
+<li>只有当外部代码调用 <code>Helper.getInstance()</code> 方法获取 <code>Helper</code> 实例时，<code>LazyHolder</code> 才会被初始化，这时才会创建实例，<strong>实现了 Lazy Initialization</strong>；</li>
+<li>JVM 会保证类的初始化在多线程环境中被正确地加锁、同步，如果有多个线程同时初始化一个类，那么只会有一个线程执行类的初始化方法，其他线程将被阻塞直到类初始化完成。这一 JVM 的硬性要求保证了这一实现是<strong>线程安全</strong>的。</li>
+</ul>
+<p>你以为到这里就结束了吗？是时候展现真正的技术了！</p>
+<hr>
+<h2 id="Enum！"><a href="#Enum！" class="headerlink" title="Enum！"></a>Enum！</h2><p>所有上面这些基于工厂方法的实现，在对象的序列化和反序列化时会遇到问题。<br>怎么办呢？使用 Java 中的 <code>enum</code> 类型来实现单例模式可以完美的解决序列化的问题，同时还自带线程安全特性。（实不相瞒，本小白也是今天才学到如此奇技淫巧，着实没想到枚举类型还能这样用，妙哉妙哉～）<br>代码相当精简：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> EnumHelper &#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="comment">// other methods</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如上所示，<code>EnumHelper.INSTANCE</code> 就是一个线程安全的单例实例了。</p>
+<hr>
+<p>还有一些坑没有提到，明天继续～</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java" target="_blank" rel="noopener">Double-checked Locking - wiki</a></li>
+<li><a href="https://stackoverflow.com/questions/7855700/why-is-volatile-used-in-double-checked-locking" target="_blank" rel="noopener">Why is volatile used in double checked locking</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom" target="_blank" rel="noopener">Initialization-on-demand Holder - wiki</a></li>
+<li><a href="https://dzone.com/articles/java-singletons-using-enum" target="_blank" rel="noopener">Java Singletons Using Enum</a></li>
+<li>Effective Java, 3rd edition</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/单例模式/" rel="tag"># 单例模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/30/tls/" rel="next" title="HTTPS 究竟是如何保障安全通信的？">
+                <i class="fa fa-chevron-left"></i> HTTPS 究竟是如何保障安全通信的？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="Jane Liao">
+            
+              <p class="site-author-name" itemprop="name">Jane Liao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/JaneLdq" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:janeldq@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                胖又萌
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kasswang.cn/" title="卡斯奈" target="_blank">卡斯奈</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://1016990109.github.io/" title="七秒悲伤" target="_blank">七秒悲伤</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#单线程中的单例模式"><span class="nav-number">1.</span> <span class="nav-text">单线程中的单例模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程中的单例模式"><span class="nav-number">2.</span> <span class="nav-text">多线程中的单例模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized"><span class="nav-number">2.1.</span> <span class="nav-text">synchronized</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Double-checked-Locking-Idiom"><span class="nav-number">2.2.</span> <span class="nav-text">Double-checked Locking Idiom</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Initialization-on-demand-holder-Idiom"><span class="nav-number">2.3.</span> <span class="nav-text">Initialization-on-demand holder Idiom</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enum！"><span class="nav-number">2.4.</span> <span class="nav-text">Enum！</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jane Liao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
