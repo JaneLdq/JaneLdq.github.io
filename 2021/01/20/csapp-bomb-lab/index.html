@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="数组查询,">
+  <meta name="keywords" content="CSAPP,">
 
 
 
@@ -79,18 +79,21 @@
 
 
 
-<meta name="description" content="问题：给定一个数组,找到一个连续的子数组,使得这个子数组的和最大。举个例子，[1, -3, 2, 1, -1]的最大子数组是[2, 1]，其和为3。 Brute-force Solution最容易想到的就是暴力解法，遍历所有可能的子数组，时间复杂度为O(n^2)。">
-<meta name="keywords" content="数组查询">
+<meta name="description" content="2020/9/11: 最终还是决定尝试一下 CSAPP 这本书配套的 Bomb Lab，事实证明，成功拆除炸弹还是非常有成就感的！开心得屁颠屁颠跑来写笔记～ 上面是去年九月开坑时写的开头，中间因为忙着准备考试实在是精力有限，一下就拖到了 2021 年。（QAQ 被高数虐了一个多月却仍然挂得很惨）月初休息了一波，最近工作也不忙了，所以我回来填坑啦～ 言归正传，在 Bomb Lab 中，我们会拿到一个">
+<meta name="keywords" content="CSAPP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Maximum Subarray Problem &amp; Kadane&#39;s Algorithm">
-<meta property="og:url" content="http://yoursite.com/2018/08/08/maximum-subarray-problem/index.html">
+<meta property="og:title" content="CSAPP - Bomb Lab 笔记">
+<meta property="og:url" content="http://yoursite.com/2021/01/20/csapp-bomb-lab/index.html">
 <meta property="og:site_name" content="Jane">
-<meta property="og:description" content="问题：给定一个数组,找到一个连续的子数组,使得这个子数组的和最大。举个例子，[1, -3, 2, 1, -1]的最大子数组是[2, 1]，其和为3。 Brute-force Solution最容易想到的就是暴力解法，遍历所有可能的子数组，时间复杂度为O(n^2)。">
+<meta property="og:description" content="2020/9/11: 最终还是决定尝试一下 CSAPP 这本书配套的 Bomb Lab，事实证明，成功拆除炸弹还是非常有成就感的！开心得屁颠屁颠跑来写笔记～ 上面是去年九月开坑时写的开头，中间因为忙着准备考试实在是精力有限，一下就拖到了 2021 年。（QAQ 被高数虐了一个多月却仍然挂得很惨）月初休息了一波，最近工作也不忙了，所以我回来填坑啦～ 言归正传，在 Bomb Lab 中，我们会拿到一个">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-01-20T09:48:07.229Z">
+<meta property="og:image" content="http://yoursite.com/uploads/images/bomb_boom.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/bomb_phase1_debug.png">
+<meta property="og:updated_time" content="2021-01-20T09:48:07.225Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Maximum Subarray Problem &amp; Kadane&#39;s Algorithm">
-<meta name="twitter:description" content="问题：给定一个数组,找到一个连续的子数组,使得这个子数组的和最大。举个例子，[1, -3, 2, 1, -1]的最大子数组是[2, 1]，其和为3。 Brute-force Solution最容易想到的就是暴力解法，遍历所有可能的子数组，时间复杂度为O(n^2)。">
+<meta name="twitter:title" content="CSAPP - Bomb Lab 笔记">
+<meta name="twitter:description" content="2020/9/11: 最终还是决定尝试一下 CSAPP 这本书配套的 Bomb Lab，事实证明，成功拆除炸弹还是非常有成就感的！开心得屁颠屁颠跑来写笔记～ 上面是去年九月开坑时写的开头，中间因为忙着准备考试实在是精力有限，一下就拖到了 2021 年。（QAQ 被高数虐了一个多月却仍然挂得很惨）月初休息了一波，最近工作也不忙了，所以我回来填坑啦～ 言归正传，在 Bomb Lab 中，我们会拿到一个">
+<meta name="twitter:image" content="http://yoursite.com/uploads/images/bomb_boom.png">
 
 
 
@@ -120,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/08/maximum-subarray-problem/">
+  <link rel="canonical" href="http://yoursite.com/2021/01/20/csapp-bomb-lab/">
 
 
 
 
 
-  <title>Maximum Subarray Problem & Kadane's Algorithm | Jane</title>
+  <title>CSAPP - Bomb Lab 笔记 | Jane</title>
   
 
 
@@ -253,7 +256,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/08/maximum-subarray-problem/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/20/csapp-bomb-lab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jane Liao">
@@ -270,7 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Maximum Subarray Problem & Kadane's Algorithm</h1>
+          <h1 class="post-title" itemprop="name headline">CSAPP - Bomb Lab 笔记</h1>
         
 
         <div class="post-meta">
@@ -282,8 +285,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-08T14:19:16+00:00">
-                2018-08-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-20T07:57:10+00:00">
+                2021-01-20
               </time>
             
 
@@ -305,8 +308,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/算法/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
+                  <a href="/categories/技术笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">技术笔记</span>
                   </a>
                 </span>
 
@@ -342,45 +345,24 @@
       
 
       
-        <p><strong>问题</strong>：给定一个数组,找到一个连续的子数组,使得这个子数组的和最大。<br>举个例子，<code>[1, -3, 2, 1, -1]</code>的最大子数组是<code>[2, 1]</code>，其和为<strong>3</strong>。</p>
-<h1 id="Brute-force-Solution"><a href="#Brute-force-Solution" class="headerlink" title="Brute-force Solution"></a>Brute-force Solution</h1><p>最容易想到的就是暴力解法，遍历所有可能的子数组，时间复杂度为O(n^2)。<br><a id="more"></a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> globalMax = Integer.MIN_VALUE;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> currentMax = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; nums.length; j++) &#123;</span><br><span class="line">            currentMax += nums[j];</span><br><span class="line">            globalMax = Math.max(globalMax, currentMax);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> globalMax;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p><em>2020/9/11: 最终还是决定尝试一下 CSAPP 这本书配套的 Bomb Lab，事实证明，成功拆除炸弹还是非常有成就感的！开心得屁颠屁颠跑来写笔记～</em></p>
+<p>上面是去年九月开坑时写的开头，中间因为忙着准备考试实在是精力有限，一下就拖到了 2021 年。（QAQ 被高数虐了一个多月却仍然挂得很惨）<br>月初休息了一波，最近工作也不忙了，所以我回来填坑啦～</p>
+<p>言归正传，在 Bomb Lab 中，我们会拿到一个名为 bomb 的可执行文件和一个 bomb.c 文件。通过 bomb.c 中的代码我们可以知道要拆除这个炸弹一共有6道关卡，只有每个关卡都给出正确输入才能拆除炸弹，否则炸弹就会爆炸，如下图所示：</p>
+<p><img src="/uploads/images/bomb_boom.png" alt="Bomb Boom"></p>
+<p>面对如此嚣张的威胁，我们要如何解决呢？<br>在 Bomb Lab 的 Writeup 里提到了一些非常有用的工具：gdb, objdump, strings。实践证明，它们真的很管用！<br>那么接下来，我们就一起来拆炸弹吧～<br><a id="more"></a></p>
+<p>第一步，<strong>获得 bomb 可执行文件的反编译代码</strong>，接下来的工作都要基于这份代码展开。<br>运行如下命令，将反编译结果输出到 bomb_dump.txt 文件中方便后续分析。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d bomb &gt; bomb_dump.txt</span><br></pre></td></tr></table></figure></p>
+<p>粗略扫一眼反编译得到的代码，搜索一下 <code>main</code> 函数，在 265 - 344 行。显然，这一长串代码对应的就是 bomb.c 中的 <code>main()</code>，它的主要功能就是输出提示，读取用户输入，并跳转到对应的 <code>phase_1</code>, <code>phase_2</code>, <code>phase_3</code>, <code>phase_4</code>, <code>phase_5</code> 和 <code>phase_6</code>。</p>
+<p>在这一段代码中，我们只需要注意一点：<code>read_line</code> 函数将用户输入的起始地址存于 <code>%rax</code> 中，在调用 <code>phase_x</code> 前用户输入被转到 <code>%rdi</code> 中，如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">400e32:	e8 67 06 00 00       	callq  40149e &lt;read_line&gt;</span><br><span class="line">400e37:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">400e3a:	e8 a1 00 00 00       	callq  400ee0 &lt;phase_1&gt;</span><br></pre></td></tr></table></figure></p>
+<p>「Note」<strong>用户输入存于 <code>%rdi</code> 中</strong>。</p>
+<p>重头戏还是在分析这六个关卡的代码。接下来，就让我们一起来逐个攻破！</p>
 <hr>
-<h1 id="Kadane’s-Algorithm"><a href="#Kadane’s-Algorithm" class="headerlink" title="Kadane’s Algorithm"></a>Kadane’s Algorithm</h1><p>暴力虽然能解决问题，但我们还是要更优雅~<br>（这道题在leetcode上被标为easy，看题的时候提示有O(n)的解法，结果想了老半天也没解出来，唉o(╥﹏╥)o</p>
-<p>Kadane算法可以优化到O(n)，怎么做到的呢？</p>
-<p>Kadane算法被归为动态规划，终于有勇气揭开DP神秘的面纱~</p>
-<blockquote>
-<p>动态规划(Dynamic programming)是一种通过把原问题分解为相对简单的子问题的方式求解复杂问题的方法。—— 维基百科</p>
-</blockquote>
-<p>两种主要的DP实现方式：</p>
-<ul>
-<li><strong>Tabulation</strong> - 自底向上(Bottom Up)解决问题</li>
-<li><strong>Memoization</strong> - 自顶向下(Top Down)解决问题</li>
-</ul>
-<p>这部分初次接触，还不太了解，先存几个Link:</p>
-<ul>
-<li><a href="https://www.codechef.com/wiki/tutorial-dynamic-programming#Introduction" target="_blank" rel="noopener">Tutorial For Dynamic Programming</a></li>
-<li><a href="https://www.geeksforgeeks.org/tabulation-vs-memoizatation/" target="_blank" rel="noopener">Tabulation vs Memoizatation</a></li>
-<li><a href="https://stackoverflow.com/questions/6164629/dynamic-programming-and-memoization-bottom-up-vs-top-down-approaches" target="_blank" rel="noopener">StackOverflow: Dynamic Programming and Memoization: bottom-up vs top-down approaches</a></li>
-</ul>
-<h2 id="Kadane算法思路"><a href="#Kadane算法思路" class="headerlink" title="Kadane算法思路"></a>Kadane算法思路</h2><p>既然动态规划的中心思想就是分解问题，所以Kadane算法中至关重要的一步就是定义合适的子问题，并找到问题与子问题间的关系。<br>Kadane算法将子问题定义为：<strong>求以第i个元素结尾的最大子数组</strong>。<br>什么意思？举个例子：<br>假设有数组A:<code>[a, b, c, d, e]</code>，则：</p>
-<ul>
-<li>以第0个元素结尾的最大子数组就是它自己：<code>[a]</code></li>
-<li>以第1个元素结尾的最大子数组可能是这些中的一个：<code>[a, b]</code>, <code>[b]</code></li>
-<li>以第2个元素结尾的最大子数组可能是这些中的一个：<code>[a, b, c]</code>, <code>[b, c]</code>, <code>[c]</code></li>
-</ul>
-<p>考虑<strong>以第<code>i</code>个元素结尾</strong>的子数组，一定是<strong>以第<code>i-1</code>个元素结尾的子数组</strong>加上<strong>第<code>i</code>个元素</strong>组成的，由此可以推导出如下关系：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">maxSum[<span class="number">0</span>] = A[<span class="number">0</span>]; <span class="comment">// i = 0</span></span><br><span class="line">maxSum[i] = A[i] + （maxSum[i-<span class="number">1</span>] &gt; <span class="number">0</span> ? maxSum[i-<span class="number">1</span>] : <span class="number">0</span>); <span class="comment">// i &gt; 0</span></span><br></pre></td></tr></table></figure>
-<p>也就是说，如果以第i-1个元素结尾的最大子数组和大于0，那么以第i个元素结尾的最大子数组就等于它前面的那部分加上它自己，否则就舍弃前面的部分，只剩它自己。</p>
-<p>回到问题，maxSum这个数组中的每个元素就代表了以当前位置结尾的最大子数组和，取maxSum中的最大值就是整个数组的最大子数组和啦。</p>
-<p>Kadane算法的完整实现如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[] maxSum = <span class="keyword">new</span> <span class="keyword">int</span>[nums.length];</span><br><span class="line">    maxSum[<span class="number">0</span>] = nums[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> max = nums[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">        maxSum[i] = nums[i] + Math.max(<span class="number">0</span>, maxSum[i-<span class="number">1</span>]);</span><br><span class="line">        max = Math.max(maxSum[i], max);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最后安利一个把MSP讲解得非常清晰的视频~<a href="https://www.youtube.com/watch?v=86CQq3pKSUw" target="_blank" rel="noopener">Kadane’s Algorithm to Maximum Sum Subarray Problem</a></p>
+<h2 id="Phase-1-事关美加边境关系？"><a href="#Phase-1-事关美加边境关系？" class="headerlink" title="Phase 1 - 事关美加边境关系？"></a>Phase 1 - 事关美加边境关系？</h2><p>我们先看一下 phase_1 的反编译代码，很简短（347 - 354 行）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">400ee0:	48 83 ec 08          	sub    $0x8,%rsp</span><br><span class="line">400ee4:	be 00 24 40 00       	mov    $0x402400,%esi</span><br><span class="line">400ee9:	e8 4a 04 00 00       	callq  401338 &lt;strings_not_equal&gt;</span><br><span class="line">400eee:	85 c0                	test   %eax,%eax</span><br><span class="line">400ef0:	74 05                	je     400ef7 &lt;phase_1+0x17&gt;</span><br><span class="line">400ef2:	e8 43 05 00 00       	callq  40143a &lt;explode_bomb&gt;</span><br><span class="line">400ef7:	48 83 c4 08          	add    $0x8,%rsp</span><br><span class="line">400efb:	c3                   	retq</span><br></pre></td></tr></table></figure></p>
+<p>我们看到 400ee4 这一行命令 <code>mov $0x402400,%esi</code> 将地址位于 <strong>0x402400</strong> 处的内容放到了 %esi 中，紧接着调用了 strings_not_equal 方法，因此我们可以猜测这一关卡的输入类型应该是个字符串。</p>
+<p>接着，我们看一下 <code>strings_not_equal</code> 函数的代码（702 - 739 行）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">401338:	41 54                	push   %r12</span><br><span class="line">40133a:	55                   	push   %rbp</span><br><span class="line">40133b:	53                   	push   %rbx</span><br><span class="line">40133c:	48 89 fb             	mov    %rdi,%rbx</span><br><span class="line">40133f:	48 89 f5             	mov    %rsi,%rbp</span><br><span class="line">401342:	e8 d4 ff ff ff       	callq  40131b &lt;string_length&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>由此可知，这个函数的两个参数分别存在了 <strong>%rdi</strong> 和 <strong>%rsi</strong> 中，<strong>%rdi</strong> 中存放的是用户输入，而 <strong>%rsi</strong> 中的内容正是从地址 <strong>0x402400</strong> 中读取来的。显然，只要我们能得到 <strong>0x402400</strong> 中的内容，这一关就搞定了～</p>
+<p>使用 gdb 运行 bomb，并在 <strong>0x400ee9</strong> 处打个断点，敲入 <code>x/s 0x402400</code>，调试过程如下所示：<br><img src="/uploads/images/bomb_phase1_debug.png" alt="Bomb phase 1 debug"></p>
+<p>于是，我们成功获得第一关卡密钥：<strong>“Border relations with Canada have never been better.”</strong></p>
 <hr>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://en.wikipedia.org/wiki/Maximum_subarray_problem" target="_blank" rel="noopener">Maximum Subarray Problem - Wiki</a></li>
-<li><a href="https://medium.com/@marcellamaki/finding-the-maximum-contiguous-sum-in-an-array-and-kadanes-algorithm-e303cd4eb98c" target="_blank" rel="noopener">Finding the maximum contiguous sum in an array and Kadane’s algorithm</a></li>
-</ul>
 
       
     </div>
@@ -398,7 +380,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/数组查询/" rel="tag"># 数组查询</a>
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
           
         </div>
       
@@ -411,8 +393,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/01/design-pattern-command/" rel="next" title="设计模式之命令模式">
-                <i class="fa fa-chevron-left"></i> 设计模式之命令模式
+              <a href="/2020/08/12/java-servlet/" rel="next" title="「认识 Tomcat」先导篇之 Servlet 是什么?">
+                <i class="fa fa-chevron-left"></i> 「认识 Tomcat」先导篇之 Servlet 是什么?
               </a>
             
           </div>
@@ -420,10 +402,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/13/java-equals/" rel="prev" title="【译记】关于equals那些事">
-                【译记】关于equals那些事 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -591,7 +569,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Brute-force-Solution"><span class="nav-number">1.</span> <span class="nav-text">Brute-force Solution</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kadane’s-Algorithm"><span class="nav-number">2.</span> <span class="nav-text">Kadane’s Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kadane算法思路"><span class="nav-number">2.1.</span> <span class="nav-text">Kadane算法思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Phase-1-事关美加边境关系？"><span class="nav-number">1.</span> <span class="nav-text">Phase 1 - 事关美加边境关系？</span></a></li></ol></div>
             
 
           </div>
